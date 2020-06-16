@@ -1,0 +1,9 @@
+.\funct_joystick.o: joystick\funct_joystick.c
+.\funct_joystick.o: C:\Keil_v5\ARM\INC\NXP\LPC17xx\lpc17xx.h
+.\funct_joystick.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm3.h
+.\funct_joystick.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\funct_joystick.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmInstr.h
+.\funct_joystick.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmFunc.h
+.\funct_joystick.o: C:\Keil_v5\ARM\INC\NXP\LPC17xx\system_LPC17xx.h
+.\funct_joystick.o: joystick\joystick.h
+.\funct_joystick.o: joystick\../led/led.h

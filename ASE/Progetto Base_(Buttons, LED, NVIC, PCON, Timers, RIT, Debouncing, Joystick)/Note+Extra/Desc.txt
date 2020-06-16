@@ -1,0 +1,11 @@
+Timer:
+modificate le funzioni di lib_timer.c aggiungendo i casi di TIMER2 e TIMER3
+aggiunti gli interrupt handler in IRQ_timer.c per TIMER2 e TIMER3
+TIMER2 e TIMER3 devono essere accesi per essere usati in modalità hardware andando su:
+  system_LPC17xx.c -> Configuration Wizard -> Clock Configuration -> Power Control for Peripherals Register -> PCTIM2/PCTIM3 (abilitati se c'è la spunta) (già accesi in questo progetto)
+
+RIT:
+aggiunte a IRQ_RIT.c operazioni utili per il debouncing di INT0, KEY1 e KEY2 e per la gestione della pressione di Up, Down, Right e Left sul Joystick (sia pressione singola sia template per pressione prolungata)
+
+LED:
+LED04 è l'ultimo LED(valore 7), gli altri vanno a salire fino a LED11(corrisponde a 0)
