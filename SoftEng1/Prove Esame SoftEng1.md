@@ -224,7 +224,7 @@ TC4(1000)
 ## Note di Teoria Varie
 
 - Differences between iterable and waterfall process? Waterfall only performs one iteration.
-- Singleton Design pattern? A class represents a concept that requires a single instance.
+- Singleton Design pattern? A class represents a concept that requires a single instance. Only one instance of the class is created.
 - Types of defects in a requirements document? Omissions/incompleteness, incorrect facts, inconsistency/contradictions, ambiguity, extraneous information, overspecification in design, redundancy.
 - What is an oracle, with its key problems? Given a test case, produces the expected output. Very difficult to have an automatic one, a human oracle is subject to errors; it's based on the program specifications, which can be wrong.
 - Exhaustive testing? Trying all possible test cases for a function/class/program. Is normally unfeasible because of the virtually infinite test cases.
@@ -234,4 +234,29 @@ TC4(1000)
 - Key concepts of Scrum? Having a product backlog(list of ordered requirements), working on increments(doing sprints of development, results must be usable), having different planning meetings(daily, sprint planning, sprint review)
 - What factors characterize a software process? Number of interactions, sequential vs parallel activities, new development vs maintenance, emphasis on documents.
 - What techniques can be used to validate the functional requirements of an application to be built? Inspection of requirements, prototype building, GUI prototype building, writing of acceptance test cases.
-- 
+- Purpose of "check in" and "check out" operations in Configuration Management? Enforce sequential changes to Configuration Items(if in lock-modify-unlock mode) or support parallel changes(if in copy-modify-merge mode) to avoid inconsistencies.
+- Pair programming technique in Xtreme Programming? Two people work on one machine to develop both production code and test cases with one person writing and the other suggesting changes/improvements (roles are often reversed).
+- What are the factors to consider in selecting a suitable software process? Criticality(safety critical, mission critical, other), size(correlates to number of developers needed), domain, maintenance vs new development
+- What is the difference between ‘correctness’ and ‘reliability’? Correctness is when a program produces the requested output for every input in the input space, reliability is the probability of providing the requested output over a period of time.
+- How is versioning implemented in Subversion? All Configuration Items in a configuration inherit version number(which increments by 1) from the configuration.
+- Repository architectural style, when can it be used? Subsystems must exchange data, either with shared data in a central database/repository which may be accessed by all subsystems or with each subsystem with its own database, passing data explicitly to other subsystems. It is best used when large amounts of data are to be shared.
+- What are the typical states of a Change Request in a maintenance process? Receive Change Requests, filter them(merge similar ones, discard incorrect/unfeasible ones), evaluate impact of Change Requests, rank them(using severity for corrective ones and importance for evolutive ones), assign Change Requests to person/team that will implement them, merge CR with next release of application, release application.
+- What is the basic principle of the Visual approach to GUI testing? Graphic components (buttons, menus etc) are recognized via image recognition.
+- What is the basic principle of the layout-based scripted approach to GUI testing? Graphic components are identified retrieving their ID(used by the graphic library) or by specific unique properties. 
+- Pipeline architectural style, when can it be used? Many modules are connected in sequence, with each module being independent of others and data flowing from one module to the next one as the only way of communication between modules. Used when there's need to process data streams according to several steps.
+- In which cases can an Oracle be automatic? If a previous, reliable version of the software application is available or if a function can be expressed mathematically.
+- What is the derivation history of a Configuration Item? The history of versions and the changes made in them for the specific CI.
+- What is the core content of the ISO 12207 standard? Hierarchical List of activities in the software process.
+- What is more relevant for a user between a defect and a failure in a software application? A failure, because the user is exposed to it.
+- Problem of interactions in Non Functional Requirements? Some NFR may be in conflict (performance vs security), so it is unfeasible to achieve both and trade-offs are required.
+- What are the risks of not using Configuration Management? Concurrent access and inconsistent modifications of CIs, unavailability of past versions of CIs.
+- Abstract Factory design style, when can it be used? Can be used when a family of related classes can have different implementation details and the client shouldn't know anything about which variant they're using.
+- Weinberg’s law? The creator of a program is unsuitable to test it since because of emotional attachment to its creature the programmer tends to overlook defects in it. 
+- Lock - Modify - Unlock approach, with pros and cons? The repository allows only one person at a time to work on a file, with a lock operation needed to work on a file and preventing others to work on it until the release of the lock. May cause delays (locks being kept for a long time, changes that don't overlap can't be done in parallel) and problems of compatibility if two files need to work together and changes ruin this functionality.
+- What is a baseline and when is it used? A baseline is a set of Configuration Items in a stable form(compiles correctly, links, passes all regression tests); it's used to deliver an application internally/externally while development continues on the next version.
+- Waterfall process, with pros and cons? Document oriented process where activities(requirement/design/implementation/unit test/intergration test/system test) are done in sequence (activity i+1 starts only after activity i is completed). Easy structure of activities and agreement on design allows to allocate tasks to many, distributed workers/companies but delivery to customer and validation of requirements/system happen very late, changes require to restart the process and there's slowness and lack of flexibility.
+- What is versioning?  Keeping copy of each instance of a Configuration Item, allowing to keep the history of all modifications to a CI, and the ability to roll back to any past instance of a CI
+- What measures can be used to evaluate the quality of software? Fault density, Mean Time Between Failures, user satisfaction (questionnaire).
+- Adapter design pattern? A class provides the required features but its interface is not the one required.
+- Considering GIT, what are the three project sections that it defines, and how are they used? (sta in qualche esame svolto che ora non ho sbatti di cercare).
+
