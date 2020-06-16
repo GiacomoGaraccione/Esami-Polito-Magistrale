@@ -1,0 +1,219 @@
+# Esercizi Esame
+
+## Context Diagram
+
+### 27/06/16
+
+|     Actor      | Physical Interface  | Logical Interface |
+| :------------: | :-----------------: | :---------------: |
+|      User      |   Smartphone, PC    |        GUI        |
+|     Admin      |         PC          |        GUI        |
+| Payment System | Internet Connection |  SSL, HTTPS, API  |
+
+```plantuml
+@startuml
+left to right direction
+actor User as u
+actor PaymentSystem as ps
+actor Admin as a
+
+a -- (Bike Service)
+
+u -- (Bike Service)
+ps -- (Bike Service)
+@enduml
+```
+Admin potrebbe estendere User, ma non c'è modo di saperlo (no correzione)
+
+### 07/09/15
+
+|    Actor    |   Physical Interface    |            Logical Interface            |
+| :---------: | :---------------------: | :-------------------------------------: |
+|    User     |     Buttons, screen     |              Screen shots               |
+| Rain Sensor | Bipolar Connector 0-3 V | Boolean (open = rain, closed = no rain) |
+
+```plantuml
+@startuml
+left to right direction
+actor User as u
+actor "Rain Sensor" as rs
+
+u -- (Watering Controller)
+rs -- (Watering Controller)
+@enduml
+```
+
+
+## Glossary (UML Diagram)
+
+## Requirements (FR, NFR)
+
+## System Design
+
+Solo entità fisiche (computer, connessioni, altri strumenti informatici)
+
+### 27/06/16
+
+```plantuml
+@startuml
+
+class "Bike Sharing Server" as bss
+class "Parking Spot Computer" as psc
+class "Stand Computer" as sc
+class "RFID Reader" as rr
+class "Bicycle Lock/Unlock Device" as blud
+class "Bicycle Interface" as bi
+
+bss -- psc : "internet connection"
+psc -- "*" sc : "wired connection"
+sc -- rr
+sc -- blud
+sc -- bi
+
+
+@enduml
+```
+
+### 07/09/15
+
+```plantuml
+@startuml
+
+class "Watering Controller" as wc
+class "Water Valve" as wv
+class "Battery" as b
+class "LCD Screen" as ls
+class "Button" as bu
+
+wc -- "2" wv
+wc -- b
+wc -- ls
+wc -- "*" bu
+
+
+
+@enduml
+```
+
+## Scenarios
+
+## Black Box Testing
+
+Valid/Invalid dipende dai valori in input, si ha NV se anche solo uno dei valori non è accettabile
+Se la funzione da testare prevede calcoli con i parametri in base ai quali decide il risultato e i parametri sono tutti validi
+
+### 18/07/16
+
+|  nLuggage   |   length1   | width1 | depth1 | weight1 | length2 | width2 | depth2 | weight2 | totalDim1 | totalDim2 | totalWeight | Valid/Invalid |      Test Case       |
+| :---------: | :---------: | :----: | :----: | :-----: | :-----: | :----: | :----: | :-----: | :-------: | :-------: | :---------: | :-----------: | :------------------: |
+| [minint, 0[ |      -      |   -    |   -    |    -    |    -    |   -    |   -    |    -    |     -     |     -     |      -      |      NV       | (-1,0,0,0,0,0,0,0,0) |
+|      0      |      -      |   -    |   -    |    -    |    -    |   -    |   -    |    -    |     -     |     -     |      -      |       V       | (0,0,0,0,0,0,0,0,0)  |
+|      1      | [minint, 0] |   -    |   -    |    -    |    -    |   -    |   -    |    -    |     -     |     -     |      -      |      NV       | (1,-1,0,0,0,0,0,0,0) |
+|      "      | [1, maxint] |        |        |         |         |        |        |         |           |           |             |               |                      |
+E poi continua ma non sono un pazzo
+
+### 27/06/16
+
+|   duration   |   minRate   |  minRate2   | Valid/Invalid |      Test Case      |
+| :----------: | :---------: | :---------: | :-----------: | :-----------------: |
+| [minint, 0[  | [minint, 0[ | [minint, 0[ |      NV       |    (-1, -1, -1)     |
+|              |             | [0, maxint] |      NV       |     (-1, -1, 5)     |
+|              | [0, maxint] | [minint, 0[ |      NV       |     (-1, 5, -1)     |
+|              |             | [0, maxint] |      NV       |     (-1, 5, 5)      |
+|   [0, 30]    | [minint, 0[ | [minint, 0[ |      NV       |    (10, -1, -1)     |
+|              |             | [0, maxint] |      NV       |     (10, -1, 5)     |
+|              | [0, maxint] | [minint, 0[ |      NV       |    (10, 10, -1)     |
+|              |             | [0, maxint] |       V       |  (10, 5, 3)  = 0.0  |
+|              |             |             |               |  (0, 5, 3)  = 0.0   |
+|              |             |             |               |  (1, 5, 3)  = 0.0   |
+|              |             |             |               |  (30, 5, 3)  = 0.0  |
+|   [31, 90]   | [minint, 0[ | [minint, 0[ |      NV       |    (31, -1, -1)     |
+|              |             | [0, maxint] |      NV       |    (31, -1, 10)     |
+|              | [0, maxint] | [minint, 0[ |      NV       |    (31, 5, -10)     |
+|              |             | [0, maxint] |       V       | (31, 10, 10) = 0.1  |
+|              |             |             |               | (40, 10, 10) = 1.0  |
+|              |             |             |               | (90, 10, 10) = 6.0  |
+| [91, maxint] | [minint, 0[ | [minint, 0[ |      NV       |    (91, -1, -1)     |
+|              |             | [0, maxint] |      NV       |    (91, -1, 10)     |
+|              | [0, maxint] | [minint, 0[ |      NV       |    (91, 10, -1)     |
+|              |             | [0, maxint] |       V       | (91, 10, 10) = 6.1  |
+|              |             |             |               | (100, 10, 10) = 8.0 |
+|              |             |             |               | (100, 0, 10) = 1.0  |
+|              |             |             |               | (100, 10, 0) = 6.0  |
+
+
+### 07/09/15
+
+|    side1    |    side2    |    side3    | triangle? | equal sides | position of equals | Valid/Invalid |   Test Cases   |
+| :---------: | :---------: | :---------: | :-------: | :---------: | :----------------: | :-----------: | :------------: |
+| [minint, 0] | [minint, 0] | [minint, 0] |     -     |      -      |         -          |      NV       |  (-1, -1, -1)  |
+|             |             | [1, maxint] |     -     |      -      |         -          |      NV       |  (-1, -1, 2)   |
+|             | [1, maxint] | [minint, 0] |     -     |      -      |         -          |      NV       |  (-1, 2, -1)   |
+|             |             | [1, maxint] |     -     |      -      |         -          |      NV       |   (-1, 2, 2)   |
+| [1, maxint] | [minint, 0] | [minint, 0] |     -     |      -      |         -          |      NV       |  (1, -1, -1)   |
+|             |             | [1, maxint] |     -     |      -      |         -          |      NV       |   (1, -1, 3)   |
+|             | [1, maxint] | [minint, 0] |     -     |      -      |         -          |      NV       |   (1, 2, -1)   |
+|             |             | [1, maxint] |     F     |      -      |         -          |       V       | (1, 1, 2) = -1 |
+|             |             |             |     T     |      0      |         -          |       V       | (3, 4, 5) = 3  |
+|             |             |             |     T     |      3      |        AAA         |       V       | (1, 1, 1) = 1  |
+|             |             |             |     T     |      2      |        AAB         |       V       | (1, 1, 3) = 2  |
+|             |             |             |     T     |      2      |        ABA         |       V       | (1, 3, 1) = 2  |
+|             |             |             |     T     |      2      |        BAA         |       V       | (3, 1, 1) = 2  |
+
+
+
+
+
+
+## White Box Testing
+
+### 18/07/16
+
+Come minchia si decide la Path coverage?
+
+|   Coverage Type    | Test Cases Needed for 100% Coverage | Coverage Obtained with defined TCs |           Test Cases Defined            |
+| :----------------: | :---------------------------------: | :--------------------------------: | :-------------------------------------: |
+|        Node        |                  2                  |                100%                |                TC1, TC2                 |
+|        Edge        |                  2                  |                100%                |                TC1, TC2                 |
+| Multiple Condition |                  4                  |                100%                |                TC1 (TT)                 |
+|                    |                                     |                                    |                 TC2(FF)                 |
+|                    |                                     |                                    |                 TC3(TF)                 |
+|                    |                                     |                                    |                 TC4(FT)                 |
+|        Loop        |                  3                  |                100%                | TC1(1 loop), TC2(no loop), TC3(2 loops) |
+|        Path        |                                     |                                    |                                         |
+
+TC1 = (-4, -1, -5);
+TC2 = (3, 0, 3);
+TC3 = (-3, -2, -1);
+TC4 = (1, 0, 0);
+
+### 27/06/16
+
+|   Coverage Type    |              Test Cases Needed for 100% Coverage              | Coverage Obtained with defined TCs | Test Cases Defined |
+| :----------------: | :-----------------------------------------------------------: | :--------------------------------: | :----------------: |
+|        Node        |                               1                               |                100%                |        TC1         |
+|        Edge        |                               1                               |                100%                |        TC1         |
+| Multiple Condition | Not possible (one condition doesn't depend on input values)NO |                100%                |      TC1 (TF)      |
+|                    |                               2                               |                                    |      TC2(TT)       |
+|                    |                                                               |                                    |   TC1 iter7(FF)    |
+|                    |                                                               |                                    |   TC1 iter7(FT)    |
+|        Loop        |                               3                               |   33% can't force one/zero iters   |    TC1 6 times     |
+|        Path        |                 4^6 = 2^12 <= 4096 if g6 < 34                 |                                    |                    |
+
+TC1 = (18, 20, 19, 18, 20, 19);
+TC2 = (18, 27, 30, 21, 29, 36);
+
+### 07/09/15
+
+|   Coverage Type    | Test Cases Needed for 100% Coverage | Coverage Obtained with defined TCs | Test Cases Defined |
+| :----------------: | :---------------------------------: | :--------------------------------: | :----------------: |
+|        Node        |                                     |                                    |                    |
+|        Edge        |                                     |                                    |                    |
+| Multiple Condition |                                     |                                    |                    |
+|                    |                                     |                                    |                    |
+|                    |                                     |                                    |                    |
+|                    |                                     |                                    |                    |
+|        Loop        |                                     |                                    |                    |
+|        Path        |                                     |                                    |                    |
+
+## Note di Teoria Varie
