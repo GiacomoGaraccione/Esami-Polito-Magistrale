@@ -223,7 +223,15 @@ TC4(1000)
 
 ## Note di Teoria Varie
 
-- Differences between iterable and waterfall process? Waterfall only performs one iteration
-- Singleton Design pattern?
-- Types of defects in a requirements document?
+- Differences between iterable and waterfall process? Waterfall only performs one iteration.
+- Singleton Design pattern? A class represents a concept that requires a single instance.
+- Types of defects in a requirements document? Omissions/incompleteness, incorrect facts, inconsistency/contradictions, ambiguity, extraneous information, overspecification in design, redundancy.
 - What is an oracle, with its key problems? Given a test case, produces the expected output. Very difficult to have an automatic one, a human oracle is subject to errors; it's based on the program specifications, which can be wrong.
+- Exhaustive testing? Trying all possible test cases for a function/class/program. Is normally unfeasible because of the virtually infinite test cases.
+- Mutation testing? Evaluating how a test suite is good by injecting errors (mutations) in a program and verifying how many mutations are caught by the test suite.
+- Copy - Modify - Merge approach, with pros and cons? Each user creates a working copy of a file. Users work in parallel, modifying their private copies and merging them. Users don't have to wait for one another to work on a file, but there's risk of conflicts arising if they both work on the same part of a file, and conflicts can't be resolved by software but require human intervention.
+- Selecting one design according to Functional Requirements? If all designs satisfy Functional Requirements, decision should be based on satisfaction of NON Functional Requirements.
+- Key concepts of Scrum? Having a product backlog(list of ordered requirements), working on increments(doing sprints of development, results must be usable), having different planning meetings(daily, sprint planning, sprint review)
+- What factors characterize a software process? Number of interactions, sequential vs parallel activities, new development vs maintenance, emphasis on documents.
+- What techniques can be used to validate the functional requirements of an application to be built? Inspection of requirements, prototype building, GUI prototype building, writing of acceptance test cases.
+- 
