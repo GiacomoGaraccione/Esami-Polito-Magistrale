@@ -205,15 +205,25 @@ TC2 = (18, 27, 30, 21, 29, 36);
 
 ### 07/09/15
 
-|   Coverage Type    | Test Cases Needed for 100% Coverage | Coverage Obtained with defined TCs | Test Cases Defined |
-| :----------------: | :---------------------------------: | :--------------------------------: | :----------------: |
-|        Node        |                                     |                                    |                    |
-|        Edge        |                                     |                                    |                    |
-| Multiple Condition |                                     |                                    |                    |
-|                    |                                     |                                    |                    |
-|                    |                                     |                                    |                    |
-|                    |                                     |                                    |                    |
-|        Loop        |                                     |                                    |                    |
-|        Path        |                                     |                                    |                    |
+|   Coverage Type    |  Test Cases Needed for 100% Coverage  | Coverage Obtained with defined TCs |       Test Cases Defined        |
+| :----------------: | :-----------------------------------: | :--------------------------------: | :-----------------------------: |
+|        Node        |                   3                   |                100%                |          TC1, TC2, TC3          |
+|        Edge        |                   4                   |                100%                |       TC1, TC2, TC3, TC4        |
+| Multiple Condition |  Not Feasible (no multiple cons) ERR  |                                    |                                 |
+|                    |             2 are enough              |                100%                |               TC1               |
+|                    |                                       |                                    |                                 |
+|                    |                                       |                                    |                                 |
+|        Loop        |                   3                   |  33% (can't force one/zero iters)  | TC1 3 times (any input is fine) |
+|        Path        | 2^3 *4 = 32     ERR (overall 4 paths) |                                    |                                 |
+
+TC1(10000)
+TC2(20000)
+TC3(40000)
+TC4(1000)
 
 ## Note di Teoria Varie
+
+- Differences between iterable and waterfall process? Waterfall only performs one iteration
+- Singleton Design pattern?
+- Types of defects in a requirements document?
+- What is an oracle, with its key problems?
