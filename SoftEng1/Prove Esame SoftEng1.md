@@ -226,4 +226,4 @@ TC4(1000)
 - Differences between iterable and waterfall process? Waterfall only performs one iteration
 - Singleton Design pattern?
 - Types of defects in a requirements document?
-- What is an oracle, with its key problems?
+- What is an oracle, with its key problems? Given a test case, produces the expected output. Very difficult to have an automatic one, a human oracle is subject to errors; it's based on the program specifications, which can be wrong.
