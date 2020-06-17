@@ -4,11 +4,11 @@
 
 ### 2/10/2017
 
-|     Actor      | Physical Interface  | Logical Interface |
-| :------------: | :-----------------: | :---------------: |
-| Car owner volounteer | PC | GUI |
-| Admin company B | PC | GUI |
-| Employee company B | PC | GUI |
+|        Actor         | Physical Interface | Logical Interface |
+| :------------------: | :----------------: | :---------------: |
+| Car owner volounteer |         PC         |        GUI        |
+|   Admin company B    |         PC         |        GUI        |
+|  Employee company B  |         PC         |        GUI        |
 
 ```plantuml
 @startuml
@@ -338,9 +338,23 @@ TC4(1000)
 - Adapter design pattern? A class provides the required features but its interface is not the one required.
 - Considering GIT, what are the three project sections that it defines, and how are they used? Git directory(collection of all committed and pushed files, accessible by all users), working directory(cloned directory where users work and implement modifications) and staging area (contains modified files committed but not yet pushed).
 - Test Driven Development technique? Write, using requirements, one test case that fails, then write corresponding code until test case passes, repeat until all requirements are satisfied and all test cases pass.
-- What are the units of measure for Duration and Effort? Duration is measured in calendar time(hours, days, weeks) and consists in the time needed to complete a project, while effort is measured in person hours and is the amount of work needed.
+- What are the units of measure for Duration and Effort? Duration is measured in calendar time(hours, days, weeks) and consists in the time needed to complete a project, while effort is measured in Person*hours and is the amount of work needed.
 - Facade Design pattern? A functionality is provided by a complex group of classes, allows to use the classes without being exposed to their details.
 - MVC Design pattern? When there's an interactive application with flexible Human Computer Interaction where the same information is presented in different ways and must be consistent, uses a Model to manage state, a View to render on the UI and a Controller to handle events from the UI.
 - Key steps in an inspection process of a requirement document? Reading document done by a group of people with the goal of finding (not correcting) defects, which are then communicated to those that wrote the document.
 - Delphi estimation method? Structured meetings to achieve consensus in estimate where each participant proposes anonymously an estimate and the team leader then publishes a synthesis of all the estimates. This process is then repeated in an iterative way.
-
+- What is a 'deliverable' (project management)? A product inside the project, can be final or intermediate, internal(for the producer) or external(for the customer).
+- Layered architectural style? The system is organised into a set of layers, each of which provides a set of services. Each layer can only use the services of its adjacent layers.
+- What is a 'milestone' (project management)? A key event or condition in the project which has effects on subsequent activities.
+- What is 'slack time' (project management)? The admissible delay to complete an activity. //definizioni di una riga trovate in una pagina
+- What is 'late start' (project management)? The latest time an activity can be started without changing the end time of the project.
+- Perspective based inspection technique? Readers read the requirements document using different points of view (end user, tester, developer)
+- Mixed Revisions in Subversion? Revisions of a working copy whose files have different revision numbers, they are only possible in the working copy and not in the central repository.
+- Testing top-down when function A calls function B that calls function C? Test A using a stub for B, then test A+B using a stub for C, then test A+B+C.
+- Testing bottom-up when function A calls function B that calls function C? Test C, then test B+C, then test A+B+C.
+- Adams's Law? It's not feasible to not inject defects in software, the probability of inserting a defect when writing or changing code is different from zero.
+- What are the most important functions of a configuration management tool? Identify and manage parts of software, handle whole history of repositories, handle branches, configuations and versions of software, handle accesses and changes to parts.
+- The cost of fixing a defect in a requirements document is higher if the project is in the requirement phase, or if the project is in the coding phase? Fixing a defect in a requirements document costs less if it's done in the requirements phase, since there are no other artifacts existing at that time.
+- What is a deadline? Calendar date when a task/deliverable has to be completed.
+- Static analysis techniques? Inspection/dataflow analysis/control flow analysis.
+- What are the key differences between testing and debugging? Testing tries to find failures, debug tries to discover the correspondent faults 
