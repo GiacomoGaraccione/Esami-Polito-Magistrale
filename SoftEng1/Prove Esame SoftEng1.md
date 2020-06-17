@@ -258,5 +258,11 @@ TC4(1000)
 - What is versioning?  Keeping copy of each instance of a Configuration Item, allowing to keep the history of all modifications to a CI, and the ability to roll back to any past instance of a CI
 - What measures can be used to evaluate the quality of software? Fault density, Mean Time Between Failures, user satisfaction (questionnaire).
 - Adapter design pattern? A class provides the required features but its interface is not the one required.
-- Considering GIT, what are the three project sections that it defines, and how are they used? (sta in qualche esame svolto che ora non ho sbatti di cercare).
+- Considering GIT, what are the three project sections that it defines, and how are they used? Git directory(collection of all committed and pushed files, accessible by all users), working directory(cloned directory where users work and implement modifications) and staging area (contains modified files committed but not yet pushed).
+- Test Driven Development technique? Write, using requirements, one test case that fails, then write corresponding code until test case passes, repeat until all requirements are satisfied and all test cases pass.
+- What are the units of measure for Duration and Effort? Duration is measured in calendar time(hours, days, weeks) and consists in the time needed to complete a project, while effort is measured in person hours and is the amount of work needed.
+- Facade Design pattern? A functionality is provided by a complex group of classes, allows to use the classes without being exposed to their details.
+- MVC Design pattern? When there's an interactive application with flexible Human Computer Interaction where the same information is presented in different ways and must be consistent, uses a Model to manage state, a View to render on the UI and a Controller to handle events from the UI.
+- Key steps in an inspection process of a requirement document? Reading document done by a group of people with the goal of finding (not correcting) defects, which are then communicated to those that wrote the document.
+- Delphi estimation method? Structured meetings to achieve consensus in estimate where each participant proposes anonymously an estimate and the team leader then publishes a synthesis of all the estimates. This process is then repeated in an iterative way.
 
