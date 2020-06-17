@@ -2,6 +2,37 @@
 
 ## Context Diagram
 
+### 12/02/2019
+
+|       Actor        | Physical Interface  |    Logical Interface     |
+| :----------------: | :-----------------: | :----------------------: |
+|      Customer      |    Smartphone/PC    |           GUI            |
+|                    |      RFID/NFC       |                          |
+|      Employee      |    Smartphone/PC    |           GUI            |
+|                    |      RFID/NFC       |                          |
+|       Admin        |         PC          |           GUI            |
+| Credit Card System | Internet Connection |   Transaction Protocol   |
+|   Card Producer    | Internet Connection | Card Production Protocol |
+
+
+```plantuml
+@startuml
+actor Customer as c
+actor Admin as a
+actor Employee as e
+actor "Credit Card System" as ccs
+actor "Card Producer" as cp
+
+c -- (FITFIT)
+a --|> e
+e -- (FITFIT)
+ccs -- (FITFIT)
+cp -- (FITFIT)
+
+
+@enduml
+```
+
 ### 2/10/2017
 
 |        Actor         | Physical Interface | Logical Interface |
@@ -68,6 +99,67 @@ rs -- (Watering Controller)
 
 ## Glossary (UML Diagram)
 
+### 12/02/2019
+
+```plantuml
+@startuml
+class "Customer" as c{
+    + accessStartDate
+    + accessEndDate
+    + accessRight
+}
+
+class "Admin" as a
+
+class "Employee" as e
+
+class "Person" as p {
+    + name
+    + surname
+    + address
+    + email
+}
+
+class "FITFIT" as FF
+
+class "Facility" as f{
+    + address
+    + id
+}
+
+class "Medical Cerificate" as mc {
+    + expirationDate
+    + writingDate
+}
+
+class "Smartphone" as s{
+    + id
+}
+
+class "RFID Card" as rfid{
+    + id
+}
+
+class "Payment" as pay{
+    + date
+    + amount
+}
+
+
+FF -- "*" p
+p -- "0...1" s
+p -- "0...1" rfid
+c -- "*" pay
+a -up-|> e
+e -up-|> p
+c -up-|> p
+FF -- "*" f
+c -- "mc"
+
+
+@enduml
+```
+
 ### 2/10/2017
 ```plantuml
 @startuml
@@ -124,11 +216,68 @@ CompanyA -- "*" Car
 @enduml
 ```
 
+## Use Case Diagram
+
+### 12/02/2019
+
+```plantuml
+@startuml
+
+
+actor Customer as c
+actor Employee as e
+actor "Credit Card System" as ccs
+actor Admin as a
+
+c -up-> (Manage Medical Certificate)
+(Manage Medical Certificate) -right-> (Check Validity) :includes
+(Manage Medical Certificate) -right-> (Upload Certificate) :includes
+c -right-> (Manage Subscription)
+e -right-> (Manage Subscription)
+(Manage Subscription) -> (Manage Payment): includes
+(Manage Subscription) -> (Request Card): includes
+(Manage Subscription) -down-> (Attach to Card or Smartphone): includes
+ccs --> (Manage Payment)
+a --> (Manage Accounts and Rights)
+e --> (Manage Access)
+(Manage Access) --> (Manage Entrance): includes
+(Manage Access) --> (Manage Exit): includes
+
+@enduml
+```
+
 ## Requirements (FR, NFR)
+
+### 12/02/2019
+
+List of important NON Functional Requirements
+
+|  ID   |                                          Description                                          |
+| :---: | :-------------------------------------------------------------------------------------------: |
+|   1   |  Privacy: a customer should know only his/her information and not the one of other customers  |
+|   2   | Usability: customers should be able to understand how the app works in no more than 5 minutes |
+|   3   |          Performance: response time of all functions offered is always < 0,5 seconds          |
 
 ## System Design
 
 Solo entità fisiche (computer, connessioni, altri strumenti informatici)
+
+### 12/02/2019
+
+```plantuml
+@startuml
+
+class "FITFIT" as FF
+class "Turnstile" as t
+class "RFID Reader" as rfid
+class "NFC Reader" as nfc
+
+FF -- "*" t
+t -- rfid
+t -- nfc
+
+@enduml
+```
 
 ### 27/06/16
 
@@ -179,6 +328,26 @@ wc -- "*" bu
 
 Valid/Invalid dipende dai valori in input, si ha NV se anche solo uno dei valori non è accettabile
 Se la funzione da testare prevede calcoli con i parametri in base ai quali decide il risultato e i parametri sono tutti validi
+
+### 12/02/2019
+
+|      g1      |      g2      |      g3      |      g4      |      g5      |      g6      | Valid/Invalid |            Test Case            |
+| :----------: | :----------: | :----------: | :----------: | :----------: | :----------: | :-----------: | :-----------------------------: |
+| [minint, 17] | [minint, 17] | [minint, 17] | [minint, 17] | [minint, 17] | [minint, 17] |      NV       |                                 |
+|    tropo     |     che      |      le      |    faccio    |    tutte     |              |               |                                 |
+|   [18, 30]   |   [18, 30]   |   [18, 30]   |   [18, 30]   |   [18, 30]   |   [18, 30]   |       V       |  (18, 18, 18, 18, 18, 18) = 18  |
+|   [18, 30]   |   [18, 30]   |   [18, 30]   |   [18, 30]   |   [18, 30]   |   [18, 30]   |       V       |  (30, 30, 30, 30, 30, 30) = 30  |
+|   [18, 30]   |   [18, 30]   |   [18, 30]   |   [18, 30]   |   [18, 30]   |   [18, 30]   |       V       | (18, 22, 27, 19, 26, 30) = 23,5 |
+|   [18, 30]   |   [18, 30]   |   [18, 30]   |   [18, 30]   |   [18, 30]   |   [18, 30]   |       V       | (18, 18, 22, 27, 19, 26) = 21,5 |
+|   [18, 30]   |   [18, 30]   |   [18, 30]   |   [18, 30]   |   [18, 30]   |   [18, 30]   |       V       |  (30, 30, 24, 26, 22, 28) = 27  |
+|   [31, 32]   |   [31, 32]   |   [31, 32]   |   [31, 32]   |   [31, 32]   |   [31, 32]   |      NV       |                                 |
+|    tropo     |     che      |      le      |    faccio    |    tutte     |   parte 2    |               |                                 |
+|   [18, 30]   |   [18, 30]   |   [18, 30]   |   [18, 30]   |   [18, 30]   |    [ 33]     |       V       |  (33, 30, 24, 26, 22, 28) = 27  |
+|    tropo     |     che      |      le      |    faccio    |    tutte     |   parte 3    |  zero sbatti  |                                 |
+
+
+
+
 
 ### 18/07/16
 
@@ -298,6 +467,10 @@ TC1(10000)
 TC2(20000)
 TC3(40000)
 TC4(1000)
+
+### 12/02/2019
+
+E' lo stesso identico caso del 07/09/15
 
 ## Note di Teoria Varie
 
