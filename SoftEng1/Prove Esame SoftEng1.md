@@ -33,6 +33,32 @@ cp -- (FITFIT)
 @enduml
 ```
 
+### 17/09/2018
+
+|      Actor       | Physical Interface | Logical Interface |
+| :--------------: | :----------------: | :---------------: |
+|     Athlete      |   PC/Smartphone    |        GUI        |
+|      Admin       |         PC         |        GUI        |
+| Racing committee |   PC/Smartphone    |        GUI        |
+|    Supporter     |   PC/Smartphone    |        GUI        |
+
+```plantuml
+@startuml
+
+actor Athlete as a
+actor Admin as ad
+actor "Racing Committee" as rc
+actor Supporter as s
+
+a -- (Bike Race Application)
+ad -- (Bike Race Application)
+rc -- (Bike Race Application)
+s -- (Bike Race Application)
+
+
+@enduml
+```
+
 ### 2/10/2017
 
 |        Actor         | Physical Interface | Logical Interface |
@@ -160,6 +186,56 @@ c -- "mc"
 @enduml
 ```
 
+### 17/09/2018
+```plantuml
+@startuml
+
+class "Athlete" as a {
+    + name
+    + surname
+    + birthdate
+    + raceNumber
+}
+
+class "Stage" as s {
+    + number
+    + day
+    + startLocation
+    + endLocation
+    + lenght
+    + maxDuration
+}
+
+class "Stage Ranking" as sr {
+    + time
+    + final: boolean
+}
+
+class "Race Ranking" as rr {
+    + time
+    + final: boolean
+}
+
+class "Result" as res {
+    + startTime
+    + endTime
+    + disqualified: boolean
+    + penalty
+}
+
+class "Bike Race" as br
+
+a -- "*" sr
+a -- "*" rr
+s -up- "*" br
+a "*" -right- "*" s
+a "*" -- "*" br
+br -- "*" rr
+(a, s) .. res
+
+@enduml
+```
+
 ### 2/10/2017
 ```plantuml
 @startuml
@@ -246,6 +322,29 @@ e --> (Manage Access)
 @enduml
 ```
 
+### 17/09/2018
+```plantuml
+@startuml
+
+actor Athlete as a
+actor "Race Committee" as rc
+actor Supporter as s
+
+a --> (Subscribe to Race)
+a --> (Retire from Race)
+s --> (View Rankings)
+rc --> (Manage Race)
+(Manage Race) --> (Define Penalties):includes
+(Manage Race) --> (Choose Race and Stages):includes
+(Manage Race) --> (Enter Stage Times for all Athletes):includes
+(Manage Race) --> (Validate and Publish Rankings):includes
+a --> s
+rc --> s
+
+
+@enduml
+```
+
 ## Requirements (FR, NFR)
 
 ### 12/02/2019
@@ -257,6 +356,16 @@ List of important NON Functional Requirements
 |   1   |  Privacy: a customer should know only his/her information and not the one of other customers  |
 |   2   | Usability: customers should be able to understand how the app works in no more than 5 minutes |
 |   3   |          Performance: response time of all functions offered is always < 0,5 seconds          |
+
+### 17/09/2018
+List of important NON Functional Requirements
+
+|  ID   |                                            Description                                            |
+| :---: | :-----------------------------------------------------------------------------------------------: |
+|   1   |          Security: athletes and supporters should not be able to modify any kind of data          |
+|   2   | Usability: average users should be able to understand how the app works in no more than 5 minutes |
+|   3   |            Performance: response time of all functions offered is always < 0,5 seconds            |
+
 
 ## System Design
 
@@ -324,6 +433,18 @@ wc -- "*" bu
 
 ## Scenarios
 
+### 17/09/2018
+Scenario specific to an employee of the organization who enters start time for a stage for an athlete
+
+Precondition: athlete A is enrolled in bike race BR, has started running in stage S.
+Postcondition: start time for A in S is inserted in the system
+| Step Number |                            Description                            |
+| :---------: | :---------------------------------------------------------------: |
+|      1      |                Employee E accesses the application                |
+|      2      | E goes to S's page for BR, listing all athletes taking part in it |
+|      3      |       E inserts in the list A's name and his/her start time       |
+|      4      |                     E submits the information                     |
+
 ## Black Box Testing
 
 Valid/Invalid dipende dai valori in input, si ha NV se anche solo uno dei valori non è accettabile
@@ -346,6 +467,29 @@ Se la funzione da testare prevede calcoli con i parametri in base ai quali decid
 |    tropo     |     che      |      le      |    faccio    |    tutte     |   parte 3    |  zero sbatti  |                                 |
 
 
+
+### 17/09/2018
+
+|  Winner Time   |   Avg Speed    | Track Type  | Valid/Invalid |        Test Case         |
+| :------------: | :------------: | :---------: | :-----------: | :----------------------: |
+| [mindouble, 0] |      any       |     any     |      NV       |     (-5, 33, B) = 0      |
+|                |                |             |               |      (0, 26, A) = 0      |
+|      any       | [mindouble, 0] |     any     |      NV       |     (10, -4, C) = 0      |
+|                |                |             |               |      (8, 0, C) = 0       |
+|      any       |      any       | ! {A, B, C} |      NV       |     (10, 20, e) = 0      |
+| (0, maxdouble] |    (0, 30]     |      A      |       V       |    (50, 27, A) = 52.5    |
+|                |                |             |       V       | (0.001, 27, A) = 0.00105 |
+|                |                |             |       V       |  (50, 0.001, A) = 52.5   |
+|                |                |             |       V       |    (50, 30, A) = 52.5    |
+|                |                |      B      |       V       |     (40, 27, B) = 48     |
+|                |                |             |       V       |         continua         |
+|                |                |             |               |                          |
+|                |                |             |               |                          |
+|                |                |             |               |                          |
+|                |                |             |               |                          |
+|                |                |             |               |                          |
+|                |                |             |               |                          |
+|                |                |             |               |                          |
 
 
 
@@ -471,6 +615,25 @@ TC4(1000)
 ### 12/02/2019
 
 E' lo stesso identico caso del 07/09/15
+
+### 17/09/2018
+
+|   Coverage Type    | Test Cases Needed for 100% Coverage | Coverage Obtained with defined TCs |    Test Cases Defined    |
+| :----------------: | :---------------------------------: | :--------------------------------: | :----------------------: |
+|        Node        |                  1                  |                100%                |           TC1            |
+|        Edge        |                  2                  |                100%                |         TC1, TC2         |
+| Multiple Condition |                  4                  |                100%                |         TC1 (TF)         |
+|                    |                                     |                                    |         TC2 (FF)         |
+|                    |                                     |                                    |         TC3(FT)          |
+|                    |                                     |                                    |         TC4(TT)          |
+|        Loop        |                  3                  |                                    | TC1(1), TC3(> 1), TC5(0) |
+|        Path        |      2^num_penalties * 2 * 2^3      |                                    |                          |
+
+TC1({20, 20, 20}, {10, 10, 10}, 1, 110)
+TC2({10, 10, 10}, {10, 10, 10}, 1, 10)
+TC3({20, 20, 20}, {10, 10, 10}, 6, {5, 5, 5, 5, 5, 5})
+TC4({20, 20, 20}, {10, 10, 10}, 6, {20, 20, 20, 20, 20, 20})
+TC5({10, 10, 10}, {10, 10, 10}, 0, {})
 
 ## Note di Teoria Varie
 
