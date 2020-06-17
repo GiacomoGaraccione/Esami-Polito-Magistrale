@@ -2,6 +2,28 @@
 
 ## Context Diagram
 
+### 2/10/2017
+
+|     Actor      | Physical Interface  | Logical Interface |
+| :------------: | :-----------------: | :---------------: |
+| Car owner volounteer | PC | GUI |
+| Admin company B | PC | GUI |
+| Employee company B | PC | GUI |
+
+```plantuml
+@startuml
+actor Car_owner_volounteer as v
+actor Admin_company_B as a
+actor Employee_company_B as e
+
+(Phantom_testing_software) as s
+
+v -- s
+a -- e
+e -- s
+@enduml
+```
+
 ### 27/06/16
 
 |     Actor      | Physical Interface  | Logical Interface |
@@ -45,6 +67,62 @@ rs -- (Watering Controller)
 
 
 ## Glossary (UML Diagram)
+
+### 2/10/2017
+```plantuml
+@startuml
+class CompanyB{
+    name
+}
+
+class CompanyA{
+    name
+}
+
+class Employee{
+    name
+    id
+}
+
+class PhantomTest{
+    id
+    dateBeginning
+    dateEnd
+}
+
+class Volunteer{
+    name
+    id
+}
+class Car
+class DefectType
+class Workshop{
+    id
+}
+class ServiceEvaluation{
+    speed
+    courtesy
+    cleanliness
+    price
+}
+
+CompanyB -- "*" Employee
+
+Volunteer -- "*" Car
+
+PhantomTest -- CompanyB
+PhantomTest -- CompanyA
+PhantomTest -- "*" Volunteer
+
+Car -- DefectType
+Car "*" -- Workshop
+
+ServiceEvaluation "*" -- Volunteer
+ServiceEvaluation -- Workshop
+
+CompanyA -- "*" Car
+@enduml
+```
 
 ## Requirements (FR, NFR)
 
