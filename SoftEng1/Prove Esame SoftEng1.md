@@ -635,6 +635,22 @@ TC3({20, 20, 20}, {10, 10, 10}, 6, {5, 5, 5, 5, 5, 5})
 TC4({20, 20, 20}, {10, 10, 10}, 6, {20, 20, 20, 20, 20, 20})
 TC5({10, 10, 10}, {10, 10, 10}, 0, {})
 
+### 02/10/2017
+
+| Coverage type | Coverage obtained | Tests |
+|--|--|--|
+|Node|100%|T1|
+|Edge|100%|T2, T1|
+|Multiple condition|75%|T1, T2|
+|Loop|66%|T1, T3|
+|Path|100%, only 3 possible paths in total|T1, T2, T3|
+
+T1(12)
+
+T2(-1)
+
+T3(1)
+
 ## Note di Teoria Varie
 
 - Differences between iterable and waterfall process? Waterfall only performs one iteration.
