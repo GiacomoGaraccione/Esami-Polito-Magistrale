@@ -59,6 +59,32 @@ s -- (Bike Race Application)
 @enduml
 ```
 
+### 13/07/2018
+
+|  Actor  | Physical Interface | Logical Interface |
+| :-----: | :----------------: | :---------------: |
+| Student |   PC/Smartphone    |        GUI        |
+| Teacher |   PC/Smartphone    |        GUI        |
+|  Admin  |         PC         |        GUI        |
+
+```plantuml
+@startuml
+
+actor User as u
+actor Student as s
+actor Teacher as t
+actor Admin as a
+
+s -up-|> u
+t -up-|> u
+a -up-|> u
+
+u -right- (Exam Management)
+
+@enduml
+```
+
+
 ### 2/10/2017
 
 |        Actor         | Physical Interface | Logical Interface |
@@ -236,6 +262,58 @@ br -- "*" rr
 @enduml
 ```
 
+### 13/07/2018
+
+```plantuml
+@startuml
+
+class "Student" as s{
+    + ID
+    + name
+    + surname
+}
+
+class "Teacher" as t{
+    + ID
+    + name
+    + surname
+}
+
+class "Course" as c{
+    + ID
+    + name
+}
+
+class "Exam" as e{
+    + date
+    + text
+}
+
+class "Paper" as p{
+    + text
+    + grade
+    + corrections
+    + graded: boolean
+    + accepted: boolean
+}
+
+class "Exam Management" as em
+
+s "*" -- "*" c: follows>
+t -- "*" c: teaches>
+s "*" -- "*" e
+t -- "*" e
+s -- "*" p
+e -- "*" p
+em -- "*" s
+em -- "*" t
+em -- "*" c
+
+
+
+@enduml
+```
+
 ### 2/10/2017
 ```plantuml
 @startuml
@@ -323,6 +401,7 @@ e --> (Manage Access)
 ```
 
 ### 17/09/2018
+
 ```plantuml
 @startuml
 
@@ -345,6 +424,32 @@ rc --> s
 @enduml
 ```
 
+### 13/07/2018
+
+```plantuml
+@startuml
+
+actor Student as s
+actor User as u
+actor Teacher as t
+actor Admin as a
+
+u -- (Authenticate)
+s -- (View Paper)
+s -- (Write Paper)
+s -- (Accept/Reject Grade)
+t -- (View Paper)
+t -- (Publish Exam)
+t -- (Correct Paper)
+t -- (Publish Grade)
+a -- (Manage Users)
+
+
+
+@enduml
+```
+
+
 ## Requirements (FR, NFR)
 
 ### 12/02/2019
@@ -365,6 +470,15 @@ List of important NON Functional Requirements
 |   1   |          Security: athletes and supporters should not be able to modify any kind of data          |
 |   2   | Usability: average users should be able to understand how the app works in no more than 5 minutes |
 |   3   |            Performance: response time of all functions offered is always < 0,5 seconds            |
+
+### 13/07/2018
+List of important NON Functional Requirements
+
+|  ID   |                                           Description                                            |
+| :---: | :----------------------------------------------------------------------------------------------: |
+|   1   |        Privacy: a student should be able to see only his/her data about grades and papers        |
+|   2   | Usability: average users should be able to understand how the app works without any instructions |
+|   3   |           Performance: response time of all functions offered is always < 0,5 seconds            |
 
 
 ## System Design
@@ -445,6 +559,20 @@ Postcondition: start time for A in S is inserted in the system
 |      3      |       E inserts in the list A's name and his/her start time       |
 |      4      |                     E submits the information                     |
 
+### 13/07/2018
+Scenario specific to a student who accesses his paper, corrected, and accepts the grade
+
+Precondition: student S has submitted a paper for exam E, paper is marked as graded, S is authorized to access the app
+Postcondition: paper is registered as accepted and can be registered
+
+| Step N |                         Description                         |
+| :----: | :---------------------------------------------------------: |
+|   1    | S accesses the application, selects exam E from course page |
+|   2    |                         S selects P                         |
+|   3    |                S chooses to accept the grade                |
+
+
+
 ## Black Box Testing
 
 Valid/Invalid dipende dai valori in input, si ha NV se anche solo uno dei valori non è accettabile
@@ -491,6 +619,32 @@ Se la funzione da testare prevede calcoli con i parametri in base ai quali decid
 |                |                |             |               |                          |
 |                |                |             |               |                          |
 
+### 13/07/2018
+
+|     ex1      |     ex2      |     lab      | ex1+ex2 >= 18 | Valid/Invalid | Test Case       |
+| :----------: | :----------: | :----------: | :-----------: | :-----------: | :-------------- |
+| [minint, 0]  |     any      |     any      |       -       |      NV       |                 |
+| [16, maxint] |     any      |     any      |       -       |      NV       |                 |
+|     any      | [minint, 0]  |     any      |       -       |      NV       |                 |
+|     any      | [16, maxint] |     any      |       -       |      NV       |                 |
+|     any      |     any      | [minint, -1] |       -       |      NV       |                 |
+|     any      |     any      | [2, maxint]  |       -       |      NV       |                 |
+|    [0, 6]    |    [0, 6]    |      0       |       F       |       V       | (3, 3, 0) = 0   |
+|      "       |      "       |      1       |       F       |       V       | (3, 3, 1) = 0   |
+|      "       |   [7, 15]    |      0       |       F       |       V       | (3, 8, 0) = 0   |
+|      "       |      "       |      "       |       T       |       V       | (6, 14, 0) = 0  |
+|      "       |      "       |      1       |       F       |       V       | (4, 13, 1) = 1  |
+|      "       |      "       |      1       |       T       |       V       | (6, 15, 1) = 1  |
+|   [7, 15]    |    [0, 6]    |      0       |       F       |       V       | (12, 4, 0) = 0  |
+|      "       |      "       |      1       |       F       |       V       | (12, 4, 1) = 0  |
+|      "       |   [7, 15]    |      0       |       F       |       V       | (7, 7, 0) = 0   |
+|              |              |              |               |       V       | (8, 9, 0) = 0   |
+|      "       |      "       |      "       |       T       |       V       | (12, 10, 0) = 1 |
+|              |              |              |               |       V       | (15, 10, 0) = 1 |
+|      "       |      "       |      1       |       F       |       V       | (7, 7, 1) = 0   |
+|              |              |              |               |       V       | (8, 9, 1) = 0   |
+|              |              |      "       |       T       |               | (12, 10, 1) = 1 |
+|              |              |              |               |               | (15, 10, 1) = 1 |
 
 
 ### 18/07/16
@@ -559,8 +713,6 @@ E poi continua ma non sono un pazzo
 ## White Box Testing
 
 ### 18/07/16
-
-Come minchia si decide la Path coverage?
 
 |   Coverage Type    | Test Cases Needed for 100% Coverage | Coverage Obtained with defined TCs |           Test Cases Defined            |
 | :----------------: | :---------------------------------: | :--------------------------------: | :-------------------------------------: |
@@ -635,21 +787,40 @@ TC3({20, 20, 20}, {10, 10, 10}, 6, {5, 5, 5, 5, 5, 5})
 TC4({20, 20, 20}, {10, 10, 10}, 6, {20, 20, 20, 20, 20, 20})
 TC5({10, 10, 10}, {10, 10, 10}, 0, {})
 
+### 13/07/2018
+
+|   Coverage Type    |    Test Cases Needed for 100% Coverage    | Coverage Obtained with defined TCs | Test Cases Defined |
+| :----------------: | :---------------------------------------: | :--------------------------------: | :----------------: |
+|        Node        |                     2                     |                100%                |      TC1, TC2      |
+|        Edge        |                     2                     |                100%                |      TC1, TC2      |
+| Multiple Condition | 1 with different iterations of inner loop |                100%                |        TC1         |
+|                    |                                           |                                    |                    |
+|                    |                                           |                                    |                    |
+|                    |                                           |                                    |                    |
+|        Loop        |    Loop doesn't depend on input values    |                33%                 |        TC1         |
+|        Path        |                3^(4*5) * 2                |                                    |                    |
+
+TC1({{1, 1, 0, 0, 0}, ….}, {{1, 0, 1, 0, 0}, ….})
+TC2({{1, 1, 1, 1, 1}, ….}, {{0, 0, 0, 0, 0}, ….})
+
 ### 02/10/2017
 
-| Coverage type | Coverage obtained | Tests |
-|--|--|--|
-|Node|100%|T1|
-|Edge|100%|T2, T1|
-|Multiple condition|75%|T1, T2|
-|Loop|66%|T1, T3|
-|Path|100%, only 3 possible paths in total|T1, T2, T3|
+|   Coverage type    |          Coverage obtained           |   Tests    |
+| :----------------: | :----------------------------------: | :--------: |
+|        Node        |                 100%                 |     T1     |
+|        Edge        |                 100%                 |   T2, T1   |
+| Multiple condition |                 75%                  |   T1, T2   |
+|        Loop        |                 66%                  |   T1, T3   |
+|        Path        | 100%, only 3 possible paths in total | T1, T2, T3 |
 
 T1(12)
 
 T2(-1)
 
 T3(1)
+
+
+
 
 ## Note di Teoria Varie
 
