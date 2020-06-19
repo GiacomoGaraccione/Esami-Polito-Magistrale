@@ -480,6 +480,21 @@ List of important NON Functional Requirements
 |   2   | Usability: average users should be able to understand how the app works without any instructions |
 |   3   |           Performance: response time of all functions offered is always < 0,5 seconds            |
 
+### 13/07/2012
+|ID|Description|
+|--|--|
+|**FR1**|**Gather data from buses**|
+|FR1.1|Get location from a bus|
+|FR1.2|Calculate bus' estimated arrival from location|
+|**FR2**|**Manage bus stop display**|
+|FR2.1|Get list of buses stopping at that bus stop|
+|FR2.2|For each bus, show estimated arrival time|
+|**FR3**|**Manage sms from users**|
+|FR3.1|Given a bus stop id, respond with list of arrivals|
+|NFR1 performance|The response sms should arrive within 5 seconds|
+|NFR2 performance|The bus stop display should refresh every 15 seconds|
+|NFR3 usability|The bus stop display should be readable from 5 meters away|
+|NFR4 privacy|The users' phone number should not be stored long-term|
 
 ## System Design
 
