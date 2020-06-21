@@ -84,6 +84,30 @@ u -right- (Exam Management)
 @enduml
 ```
 
+### 28/06/2018
+
+|            Actor            | Physical Interface  | Logical Interface |
+| :-------------------------: | :-----------------: | :---------------: |
+|           Citizen           |    PC/Smartphone    |        GUI        |
+|    General Practitioner     |    PC/Smartphone    |        GUI        |
+|        Analysis Lab         |         PC          |        GUI        |
+| SPID Authentication Service | Internet Connection |        API        |
+
+```plantuml
+@startuml
+
+actor Citizen as c
+actor "General Practitioner" as gp
+actor "Analysis Lab" as al
+actor "SPID Authentication Service" as spid
+
+c -- (Health Portal)
+gp --|> c
+al -- (Health Portal)
+spid -- (Health Portal)
+
+@enduml
+```
 
 ### 2/10/2017
 
@@ -104,6 +128,31 @@ actor Employee_company_B as e
 v -- s
 a -- e
 e -- s
+@enduml
+```
+
+### 24/07/2017
+
+|     Actor      | Physical Interface  | Logical Interface |
+| :------------: | :-----------------: | :---------------: |
+|   Car Owner    |     Smartphone      |        GUI        |
+| Police Officer |     Smartphone      |        GUI        |
+|  City Officer  |         PC          |        GUI        |
+| Payment System | Internet Connection |        API        |
+
+```plantuml
+@startuml
+
+actor "Car Owner" as co
+actor "Police Officer" as po
+actor "City Officer" as cto
+actor "Payment System" as ps
+
+co -right- (Car Parking Application)
+cto -left- (Car Parking Application)
+po -- (Car Parking Application)
+ps -- (Car Parking Application)
+
 @enduml
 ```
 
@@ -314,6 +363,60 @@ em -- "*" c
 @enduml
 ```
 
+### 28/06/2018
+
+```plantuml
+@startuml
+
+class "Citizen" as c{
+    + name
+    + surname
+    + SSN
+    + password
+}
+
+class "General Practitioner" as gp{
+
+}
+
+class "Analysis Lab" as al{
+    + address
+}
+
+class "Analysis Request" as ar{
+    + type
+}
+
+class "Health Document" as hd{
+    + type
+    + issueDate
+    + signer
+}
+
+
+
+class "Health Portal" as hp{
+
+}
+
+class "Service" as s
+
+hp -- "*" c
+hp -- "*" gp
+hp -- "*" al
+hp -- "*" s
+gp --|> "*" c:takes care of
+c -left- "*" ar:requests
+gp -- "*" ar:issues
+al -- "*" ar:performs
+c -- "*" hd:browses
+
+
+
+
+@enduml
+```
+
 ### 2/10/2017
 ```plantuml
 @startuml
@@ -370,6 +473,73 @@ CompanyA -- "*" Car
 @enduml
 ```
 
+### 24/07/2017
+
+```plantuml
+@startuml
+class "Car Owner" as co{
+    + ID
+    + name
+    + surname
+}
+
+class "Credit Card" as cc{
+
+}
+
+class "Police Officer" as po{
+    + ID
+    + name
+    + surname
+}
+
+class "Parking Fee" as pf{
+    + area
+    + price
+}
+
+class "One Off" as oo{
+    + duration
+    + day
+    + partOfDay
+}
+
+class "Pass" as p{
+    + period
+}
+
+class "Car" as c{
+    + model
+    + brand
+    + tag
+}
+
+class "Ticket" as t{
+    + amount
+}
+
+class "City Officer" as cto{
+    + ID
+    + name
+    + surname
+}
+
+class "Car Parking Application" as cpa
+
+co -- c:owns
+c -- "*" pf
+oo --|> pf
+p --|> pf
+po -- "*" pf:checks
+po -- "*" t:issues
+c -- "0..*" t
+cpa -- "*" co
+cpa -- "*" po
+cpa -- "*" cto
+
+
+@enduml
+```
 ## Use Case Diagram
 
 ### 12/02/2019
@@ -449,7 +619,6 @@ a -- (Manage Users)
 @enduml
 ```
 
-
 ## Requirements (FR, NFR)
 
 ### 12/02/2019
@@ -481,20 +650,20 @@ List of important NON Functional Requirements
 |   3   |           Performance: response time of all functions offered is always < 0,5 seconds            |
 
 ### 13/07/2012
-|ID|Description|
-|--|--|
-|**FR1**|**Gather data from buses**|
-|FR1.1|Get location from a bus|
-|FR1.2|Calculate bus' estimated arrival from location|
-|**FR2**|**Manage bus stop display**|
-|FR2.1|Get list of buses stopping at that bus stop|
-|FR2.2|For each bus, show estimated arrival time|
-|**FR3**|**Manage sms from users**|
-|FR3.1|Given a bus stop id, respond with list of arrivals|
-|NFR1 performance|The response sms should arrive within 5 seconds|
-|NFR2 performance|The bus stop display should refresh every 15 seconds|
-|NFR3 usability|The bus stop display should be readable from 5 meters away|
-|NFR4 privacy|The users' phone number should not be stored long-term|
+|        ID        |                        Description                         |
+| :--------------: | :--------------------------------------------------------: |
+|     **FR1**      |                 **Gather data from buses**                 |
+|      FR1.1       |                  Get location from a bus                   |
+|      FR1.2       |       Calculate bus' estimated arrival from location       |
+|     **FR2**      |                **Manage bus stop display**                 |
+|      FR2.1       |        Get list of buses stopping at that bus stop         |
+|      FR2.2       |         For each bus, show estimated arrival time          |
+|     **FR3**      |                 **Manage sms from users**                  |
+|      FR3.1       |     Given a bus stop id, respond with list of arrivals     |
+| NFR1 performance |      The response sms should arrive within 5 seconds       |
+| NFR2 performance |    The bus stop display should refresh every 15 seconds    |
+|  NFR3 usability  | The bus stop display should be readable from 5 meters away |
+|   NFR4 privacy   |   The users' phone number should not be stored long-term   |
 
 ## System Design
 
@@ -662,6 +831,48 @@ Se la funzione da testare prevede calcoli con i parametri in base ai quali decid
 |              |              |              |               |               | (15, 10, 1) = 1 |
 
 
+### 28/06/2018
+
+|     age     |     familyIncome      | isEmployed  | Valid/Invalid |       Test Case        |
+| :---------: | :-------------------: | :---------: | :-----------: | :--------------------: |
+| [minint, 0) |           *           |      *      |      NV       | (-1, 10000, 1) = error |
+|      *      |    [mindouble, 0)     |      *      |      NV       | (4, -1000, 1) = error  |
+|      *      |           *           | [minint, 0] |      NV       | (4, 10000, -1) = error |
+|      *      |           *           | [2, maxint] |      NV       | (4, 10000, 2) = error  |
+|   [0, 5]    |     [0, 36151.98]     |      0      |       V       |   (3, 10000, 0) = 1    |
+|      "      |           "           |      "      |       V       |   (0, 10000, 0) = 1    |
+|      "      |           "           |      "      |       V       |     (1, 0, 0) = 1      |
+|      "      |           "           |      "      |       V       |  (4, 36151.97, 0) = 1  |
+|      "      |           "           |      1      |       V       |   (3, 10000, 1) = 1    |
+|      "      |           "           |      "      |       V       |   (0, 10000, 1) = 1    |
+|      "      |           "           |      "      |       V       |     (1, 0, 1) = 1      |
+|      "      |           "           |      "      |       V       |  (5, 36151.97, 1) = 1  |
+|      "      | (36151.95, maxdouble] |      0      |       V       |   (3, 40000, 0) = 0    |
+|      "      |           "           |      "      |       V       |   (0, 40000, 0) = 0    |
+|      "      |           "           |      "      |       V       |   (5, 40000, 0) = 0    |
+|      "      |           "           |      1      |       V       |   (3, 40000, 1) = 0    |
+|      "      |           "           |      "      |       V       |   (0, 40000, 1) = 0    |
+|      "      |           "           |      "      |       V       |   (5, 40000, 1) = 0    |
+|   [6, 65]   |     [0, 8263.57]      |      0      |       V       |   (20, 1000, 0) = 1    |
+|      "      |           "           |      "      |       V       |  (6, 8263.57, 0) = 1   |
+|      "      |           "           |      "      |       V       |   (65, 3000, 0) = 1    |
+|    tropo    |          che          |     li      |    finisco    |                        |
+
+
+ ### 03/07/2017
+
+ | drivingTime |  stopTime   | reservationTime | Valid/Invalid |       Test Case        |
+ | :---------: | :---------: | :-------------: | :-----------: | :--------------------: |
+ | [minint, 0] |      *      |        *        |      NV       | (-10, 10, 10) = error  |
+ |      *      | [minint, 0) |        *        |      NV       | (10, -10, 10) = error  |
+ |      *      |      *      |   [minint, 0]   |      NV       | (10, 10, -10) =  error |
+ | (0, maxint] | [0, maxint] |     (0, 15]     |       V       |    (5, 0, 5) = 1.25    |
+ |      "      |      "      |        "        |       V       |   (10, 5, 15) = 3.0    |
+ |      "      |      "      |  (15, maxint]   |       V       |   (10, 10, 25) = 4.5   |
+ |             |             |                 |               |                        |
+ |             |             |                 |               |                        |
+ |             |             |                 |               |                        |
+
 ### 18/07/16
 
 |  nLuggage   |   length1   | width1 | depth1 | weight1 | length2 | width2 | depth2 | weight2 | totalDim1 | totalDim2 | totalWeight | Valid/Invalid |      Test Case       |
@@ -818,6 +1029,22 @@ TC5({10, 10, 10}, {10, 10, 10}, 0, {})
 TC1({{1, 1, 0, 0, 0}, ….}, {{1, 0, 1, 0, 0}, ….})
 TC2({{1, 1, 1, 1, 1}, ….}, {{0, 0, 0, 0, 0}, ….})
 
+### 28/06/2018
+
+|   Coverage type    |   Test Cases Needed for 100% Coverage   | Coverage obtained |     Tests     |
+| :----------------: | :-------------------------------------: | :---------------: | :-----------: |
+|        Node        |                    3                    |       100%        | TC1, TC2, TC3 |
+|        Edge        |                    3                    |       100%        | TC1, TC2, TC3 |
+| Multiple condition | Not feasible (TT can never be obtained) |        75%        |      TC4      |
+|        Loop        |                    3                    |       100%        |   TC1, TC2    |
+|        Path        |          2 * 3 * 3^n_children           |                   |               |
+
+TC1(8000, 1, 1, -5)
+TC2(0, 0, 2, {17, 19})
+TC3(8000, 1,  2, {16, 17})
+TC4(8000, 1, 3, {-2, 15, 103})
+TC5(1000, 1, 0, {})
+
 ### 02/10/2017
 
 |   Coverage type    |          Coverage obtained           |   Tests    |
@@ -834,7 +1061,20 @@ T2(-1)
 
 T3(1)
 
+### 24/07/2017
 
+|   Coverage type    | Test Cases Needed for 100% Coverage | Coverage obtained |     Tests     |
+| :----------------: | :---------------------------------: | :---------------: | :-----------: |
+|        Node        |                  3                  |       100%        | TC1, TC2, TC3 |
+|        Edge        |                  3                  |       100%        | TC1, TC2, TC3 |
+| Multiple condition |                  4                  |       100%        |     TC1()     |
+|                    |                                     |                   |               |
+|        Loop        |                                     |                   |   TC1, TC2    |
+|        Path        |                                     |                   |               |
+
+TC1(20, 11, 10, 19, 16)
+TC2(16, 16, 17, 16, 17)
+TC3(-2, 101, 18, 15, 9)
 
 
 ## Note di Teoria Varie
@@ -844,7 +1084,7 @@ T3(1)
 - Types of defects in a requirements document? Omissions/incompleteness, incorrect facts, inconsistency/contradictions, ambiguity, extraneous information, overspecification in design, redundancy.
 - What is an oracle, with its key problems? Given a test case, produces the expected output. Very difficult to have an automatic one, a human oracle is subject to errors; it's based on the program specifications, which can be wrong.
 - Exhaustive testing? Trying all possible test cases for a function/class/program. Is normally unfeasible because of the virtually infinite test cases.
-- Mutation testing? Evaluating how a test suite is good by injecting errors (mutations) in a program and verifying how many mutations are caught by the test suite.
+- Mutation testing? Evaluating how good a test suite is by injecting errors (mutations) in a program and verifying how many mutations are caught by the test suite.
 - Copy - Modify - Merge approach, with pros and cons? Each user creates a working copy of a file. Users work in parallel, modifying their private copies and merging them. Users don't have to wait for one another to work on a file, but there's risk of conflicts arising if they both work on the same part of a file, and conflicts can't be resolved by software but require human intervention.
 - Selecting one design according to Functional Requirements? If all designs satisfy Functional Requirements, decision should be based on satisfaction of NON Functional Requirements.
 - Key concepts of Scrum? Having a product backlog(list of ordered requirements), working on increments(doing sprints of development, results must be usable), having different planning meetings(daily, sprint planning, sprint review)
