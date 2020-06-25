@@ -1,20 +1,13 @@
 class Vehicle {
-
-
-    constructor(id, cathegory, brand, model) {
-        if (id) {
-            this.id = id;
-        }
-
-        this.cathegory = cathegory;
-        this.brand = brand;
-        this.model = model;
+  constructor(Id, Category, Brand, Model) {
+    if (Id) {
+      this.Id = Id;
     }
 
-    static from(json) {
-        const t = Object.assign(new Vehicle, json);
-        return t;
-    }
+    this.Category = Category;
+    this.Brand = Brand;
+    this.Model = Model;
+  }
 }
 
-export default Vehicle;
+module.exports = Vehicle;

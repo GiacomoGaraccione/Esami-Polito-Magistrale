@@ -1,92 +1,182 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import API from './api/API.js'
-import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
-import Dropdown from 'react-bootstrap/Dropdown'
-import Row from 'react-bootstrap/Row';
-import Button from 'react-bootstrap/Button';
-import Table from 'react-bootstrap/Table';
-import { BrowserRouter as Router, Redirect, Route, Link } from 'react-router-dom';
-import { withRouter } from 'react-router-dom';
-import { Switch } from 'react-router';
-
+import React from "react";
+import "./App.css";
+import API from "./api/API.js";
+import Container from "react-bootstrap/Container";
+import { Route } from "react-router-dom";
+import { Switch } from "react-router";
+import { AppTitle, LoginButton } from "./CustomComponents.js";
+import { ShowVehicles } from "./VehicleComponents.js";
+import { Filters } from "./Filters.js";
+import LoginForm from "./LoginForm.js";
 
 class App extends React.Component {
-
-
-
   constructor(props) {
     super(props);
-    this.state = { vehicles: [], response: '' };
+    this.state = {
+      vehicles: [],
+      brands: [],
+      vehiclesFiltered: [],
+      vehiclesShow: [],
+      activeCatFilters: [],
+      activeBrandFilters: [],
+      loggedIn: false,
+      username: undefined,
+      password: undefined,
+    };
   }
 
   componentDidMount() {
-    this.callApi()
-      .then(res => this.setState({ response: res.express }))
-      .catch(err => console.log(err));
+    API.getVehicles().then((v) =>
+      this.setState({ vehicles: v, vehiclesShow: v })
+    );
+    API.getBrands().then((b) => this.setState({ brands: b }));
   }
 
-  callApi = async () => {
-    const response = await fetch('/api/vehicles');
-    const body = await response.json();
-    if (response.status !== 200) throw Error(body.message);
+  onClickCatFilter = (c) => {
+    let aCF = this.state.activeCatFilters;
+    let aBF = this.state.activeBrandFilters;
+    let vF = [];
 
-    return body;
+    if (this.state.activeCatFilters.includes(c.value)) {
+      let i = aCF.indexOf(c);
+      aCF.splice(i, 1);
+      if (aCF.length === 0 && aBF.length === 0) {
+        vF = this.state.vehicles;
+      } else {
+        for (let [i, v] of this.state.vehicles.entries()) {
+          let br = v.brand;
+          let cat = v.category;
+          if (v.category === c.value) {
+            if (aBF.length === 0) {
+              vF.push(v);
+            } else if (aBF.includes(br)) {
+              vF.push(v);
+            }
+          } else if (aCF.includes(cat)) {
+            if (aBF.length === 0) {
+              vF.push(v);
+            } else if (aBF.includes(br)) {
+              vF.push(v);
+            }
+          }
+        }
+      }
+    } else {
+      aCF.push(c.value);
+      for (let [i, v] of this.state.vehicles.entries()) {
+        let br = v.brand;
+        let cat = v.category;
+        if (v.category === c.value) {
+          if (aBF.length === 0) {
+            vF.push(v);
+          } else if (aBF.includes(br)) {
+            vF.push(v);
+          }
+        } else if (aCF.includes(cat)) {
+          if (aBF.length === 0) {
+            vF.push(v);
+          } else if (aBF.includes(br)) {
+            vF.push(v);
+          }
+        }
+      }
+    }
+    this.setState(() => ({
+      vehiclesShow: vF,
+      activeCatFilters: aCF,
+      activeBrandFilters: aBF,
+    }));
   };
 
+  onClickBrandFilter = (b) => {
+    let aCF = this.state.activeCatFilters;
+    let aBF = this.state.activeBrandFilters;
+    let vF = [];
 
-  getVehicles = () => {
-    API.getVehicles().then((vehicles) => this.setState({ vehicles: vehicles }));
-  }
+    if (this.state.activeBrandFilters.includes(b.Brand)) {
+      let i = aBF.indexOf(b.Brand);
+      aBF.splice(i, 1);
+      if (aBF.length === 0 && aCF.length === 0) {
+        vF = this.state.vehicles;
+      } else {
+        for (let [i, v] of this.state.vehicles.entries()) {
+          let br = v.brand;
+          let cat = v.category;
+          if (v.brand === b.Brand) {
+            if (aCF.length === 0) {
+              vF.push(v);
+            } else if (aCF.includes(cat)) {
+              vF.push(v);
+            }
+          } else if (aBF.includes(br)) {
+            if (aCF.length === 0) {
+              vF.push(v);
+            } else if (aCF.includes(cat)) {
+              vF.push(v);
+            }
+          }
+        }
+      }
+    } else {
+      aBF.push(b.Brand);
+      for (let [i, v] of this.state.vehicles.entries()) {
+        let br = v.brand;
+        let cat = v.category;
+        if (v.brand === b.Brand) {
+          if (aCF.length === 0) {
+            vF.push(v);
+          } else if (aCF.includes(cat)) {
+            vF.push(v);
+          }
+        } else if (aBF.includes(br)) {
+          if (aCF.length === 0) {
+            vF.push(v);
+          } else if (aCF.includes(cat)) {
+            vF.push(v);
+          }
+        }
+      }
+    }
+    this.setState(() => ({
+      vehiclesShow: vF,
+      activeCatFilters: aCF,
+      activeBrandFilters: aBF,
+    }));
+  };
+
+  doLogin = (username, password) => {
+    this.setState({
+      username: username,
+      password: password,
+      loggedIn: true,
+    });
+  };
 
   render() {
-
     return (
-
-      <Router>
-        <Container fluid className="title">
-          <Row>
-            Car Rental Application
-          </Row>
-        </Container>
-        <Container fluid className="homepageTableHeader">
-          <Row>
-            Available Vehicles
-          </Row>
-        </Container>
-        <Container fluid>
-          <Switch>
-            <Route path="/">
-              <Table striped bordered hover>
-                <thead>
-                  <tr>
-
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Username</th>
-                  </tr>
-                </thead>
-                <tbody>
-
-                </tbody>
-              </Table>
-              <Route render={({ match }) => {
-                return this.vehicles;
-              }} />
-            </Route>
-          </Switch>
-
-        </Container>
-        <Container fluid className="fixed-right-bottom">
-          <Button variant="primary" size="lg" className="LoginButton">
-            Login
-          </Button>{' '}
-        </Container>
-
-
-      </Router >
+      <Container fluid>
+        <Switch>
+          <Route path="/private">
+            <AppTitle />
+          </Route>
+          <Route path="/home">
+            <AppTitle />
+            <LoginButton />
+            <Filters
+              vehicles={this.state.vehicles}
+              vehiclesFiltered={this.state.vehiclesFiltered}
+              brands={this.state.brands}
+              onClickCatFilter={this.onClickCatFilter}
+              onClickBrandFilter={this.onClickBrandFilter}
+            />
+            <ShowVehicles vehiclesShow={this.state.vehiclesShow} />
+          </Route>
+          <Route path="/login">
+            <AppTitle />
+            <LoginForm loggedIn={this.doLogin} />
+          </Route>
+        </Switch>
+      </Container>
     );
   }
 }
