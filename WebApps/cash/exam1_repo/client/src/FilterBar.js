@@ -26,6 +26,7 @@ export default class FilterBar extends React.Component {
     }
 
     createFilterListItem = (text, type) => {
+        //the prop 'action' is for hover effects
         return <ListGroup.Item action={true} key={text + '-' + type} onClick={(e) => {this.onClickEvent(e, type)}}>{text}</ListGroup.Item>
     }
 
