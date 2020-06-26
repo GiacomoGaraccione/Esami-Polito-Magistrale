@@ -1,4 +1,5 @@
 import Car from './Car.js'
+import Rental from './Rental.js'
 
 export async function getAllCars(){
     const res = await fetch('/api/cars');
@@ -47,18 +48,84 @@ export async function logout(){
     });
 }
 
-//given the form data, returns the number of available cars
+//given the form data, returns the list of available cars (list of ids)
 export async function getAvailableCars(category, begDate, endDate){
     const res = await fetch('/api/cars/available?category=' + category + '&begDate=' + begDate + '&endDate=' + endDate);
     const resJ = await res.json();
     if(res.ok){
-        return resJ;
+        return resJ.map(j => j.id);
     }
     
     let err = {status: res.status, errObj:resJ};
     throw err;
 }
 
-export async function isFrequentCustomer(user){
+export async function getUserRentals(user){
+    const res = await fetch('/api/users/' + user + '/rentals');
+    const resJ = await res.json();
+    if(res.ok){
+        return resJ.map(j => rentalFromJson(j));
+    }
     
+    let err = {status: res.status, errObj:resJ};
+    throw err;
+}
+
+function rentalFromJson(j){
+    return new Rental(j.id, j.carId, j.dateBeginning, j.dateEnd, j.userId);
+}
+
+export async function sendPaymentInformation(cardNumber, name, cvv){
+    return new Promise( (resolve, reject) => {
+        fetch('/api/payment', {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json',
+            },
+            body: JSON.stringify({cardNumber: cardNumber, name: name, cvv: cvv})
+        })
+        .then(() => {
+            resolve();
+        })
+        .catch((err) => {
+            reject(err);
+        })
+    } );
+}
+
+export async function postNewRental(carId, dateBeginning, dateEnd, username){
+    return new Promise( (resolve, reject) => {
+        fetch('/api/rentals', {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json',
+            },
+            body: JSON.stringify({carId: carId, dateBeginning: dateBeginning, dateEnd: dateEnd, username: username})
+        })
+        .then(() => {
+            resolve();
+        })
+        .catch((err) => {
+            reject(err);
+        });
+    } );
+}
+
+export async function deleteRental(id){
+    return new Promise( (resolve, reject) => {
+        fetch('/api/rentals/' + id, {method: 'DELETE'})
+        .then((res) => {
+            if(res.ok){
+                resolve();
+            }
+            else{
+                console.log('error in api.js in deleting a rental');
+                reject();
+            }
+        })
+        .catch(() => {
+            console.log('error in api.js delete rental');
+            reject();
+        })
+    } );
 }

@@ -63,17 +63,71 @@ app.get('/api/cars/available', (req, res) => {
     const end = req.query.endDate;
 
     dao.getAvailableCars(cat, beg, end)
-    .then((numCars) => {
-        res.json(numCars);
+    .then((cars) => {
+        res.json(cars);
     })
     .catch((err) => {
         res.status(500).json({errors: [{'msg': err}]});
     });
 });
 
-//GET rentals
-app.get('/api/rentals/', (req, res) => {
+//GET rentals of a user
+app.get('/api/users/:username/rentals', (req, res) => {
+    const username = req.params.username;
     
+    dao.getUserRentals(username)
+    .then((rentals) => {
+        res.json(rentals);
+    })
+    .catch((err) => {
+        res.status(500).json({errors: [{'msg': err}]});
+    });
+});
+
+
+app.post('/api/payment', (req, res) => {
+    const cardNumber = req.body.cardNumber;
+    const name = req.body.name;
+    const cvv = req.body.cvv;
+
+    if(cardNumber.length > 0 && name.length > 0 && cvv.length > 0){
+        res.end();
+    }
+    else{
+        res.status(500).json({error: 'fields must not be empty'});
+    }
+});
+
+//POST new rental
+app.post('/api/rentals', (req, res) => {
+    const carId = req.body.carId;
+    const dateBeg = req.body.dateBeginning;
+    const dateEnd = req.body.dateEnd;
+    const username = req.body.username;
+
+    dao.saveNewRental(carId, dateBeg, dateEnd, username)
+    .then(() => {
+        res.end();
+    })
+    .catch(() => {
+        res.status(500).json({error: 'error in saving the rentals'});
+    });
+
+    
+});
+
+//DELETE a rental
+app.delete('/api/rentals/:id', (req, res) => {
+    const id = req.params.id;
+    
+    dao.deleteRental(id)
+    .then(() => {
+        res.end();
+    })
+    .catch(() => {
+        console.log('error in server.js deleting rental');
+        res.status(500).json({error: 'error in deleting the rental'});
+    })
 });
 
 app.listen(PORT, ()=>console.log(`Server running on http://localhost:${PORT}/`));

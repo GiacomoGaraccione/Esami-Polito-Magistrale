@@ -1,23 +1,70 @@
 import React from 'react';
 import * as api from './api.js'
 import moment from 'moment';
+import Alert from 'react-bootstrap/Alert';
+import Col from 'react-bootstrap/Col'
+import Button from 'react-bootstrap/Button'
+import PaymentModal from './PaymentModal.js'
 
 export default class FormResults extends React.Component {
     constructor(props){
         super(props);
 
-        this.state = {availableCars: 'N/A', totCarsInCategory: undefined, allCars: []};
+        this.state = {availableCars: [], totCarsInCategory: undefined, allCars: [], userRentals: [], showPayModal: false};
     }
 
     render(){
         if(this.checkValid()){
         return <> 
-        <p>Available cars: {this.state.availableCars}</p>
-        <p>Rental price: {this.calculateRentalPrice()}</p>
+        <Col className='text-center col-2'>
+            {
+                this.isUserFrequent() && this.state.availableCars.length > 0 && 
+                <Alert variant='success'>Since you are a frequent customer, you got a 10% discount!</Alert>
+            }
+        </Col>
+
+        <Col className='text-center col-4'>
+            <Alert variant={this.state.availableCars.length > 0 ? 'info' : 'danger'}>
+                Available cars: {this.state.availableCars.length}
+            </Alert>
+
+            <Alert variant='info'>
+                Rental price: {this.calculateRentalPrice().toFixed(2) + ' €'}
+            </Alert>
+
+            {this.state.availableCars.length > 0 && <Button variant='success' onClick={() => {this.setShowPayModal(true);}}>Submit</Button>}
+
+            <PaymentModal 
+                show={this.state.showPayModal} 
+                user={this.props.user} 
+                availableCars={this.state.availableCars} 
+                setShow={this.setShowPayModal} 
+                dateBeg={this.props.data.beginningDate} 
+                dateEnd={this.props.data.endDate}
+            />
+
+        </Col>
+
+        <Col className='text-center col-2'>
+            {
+                this.state.availableCars.length > 0 && 100*this.state.availableCars.length/this.state.totCarsInCategory < 10 &&
+                <Alert variant='danger'>Less than 10% of vehicles of this category available: price is increased 10%!</Alert>
+            }
+        </Col>
         </>;
         }
         else{
-            return <p>Please correctly fill out all the fields! (Check also: beginning date must be before or the same date as the end date!)</p>;
+            return <>
+            <Col className='col-2'/>
+
+            <Col className='text-center col-4'> 
+                <Alert variant='danger'>
+                    Please correctly fill out all the fields!
+                </Alert>
+            </Col>
+
+            <Col className='col-2'/>
+            </>;
         }
     }
 
@@ -28,6 +75,18 @@ export default class FormResults extends React.Component {
                 allCars: res
             });
         } );
+
+        this.updateUserRentals();
+    }
+
+    updateUserRentals = () => {
+        api.getUserRentals(this.props.user)
+        .then((res) => {
+            this.setState({userRentals: res});
+        })
+        .catch((err) => {
+            console.log('error in getting rentals of user', err);
+        })
     }
 
     componentDidUpdate = (prevProps) => {
@@ -50,6 +109,14 @@ export default class FormResults extends React.Component {
         if (!this.checkDates(beg, end)){
             return;
         }
+
+        this.updateAvailableCars();
+    }
+
+    updateAvailableCars = () => {
+        let cat = this.props.data.category;
+        let beg = this.props.data.beginningDate;
+        let end = this.props.data.endDate;
 
         api.getAvailableCars(cat, beg, end)
         .then((response) => {
@@ -87,8 +154,89 @@ export default class FormResults extends React.Component {
     }
 
     calculateRentalPrice = () => {
-        //TODO
-        let percRemainingCars = 100*this.state.availableCars/this.state.totCarsInCategory;
-        return 666;
+        if(this.state.availableCars.length === 0){
+            return 0;
+        }
+
+        let percRemainingCars = 100*this.state.availableCars.length/this.state.totCarsInCategory;
+        let cat = this.props.data.category;
+        let kmPerDay = this.props.data.kmPerDay;
+        let age = this.props.data.age;
+        let extraDrivers = this.props.data.extraDrivers;
+        let insurance = this.props.data.insurance;
+
+        let price = 0;
+
+        //category
+        if(cat.localeCompare('A') === 0){
+            price = 80;
+        }
+        else if(cat.localeCompare('B') === 0){
+            price = 70;
+        }
+        else if(cat.localeCompare('C') === 0){
+            price = 60;
+        }
+        else if(cat.localeCompare('D') === 0){
+            price = 50;
+        }
+        else if(cat.localeCompare('E') === 0){
+            price = 40;
+        }
+
+        // kms/day
+        if(kmPerDay.localeCompare('Less than 50 km/day') === 0){
+            price = price * 0.95;
+        }
+        else if(kmPerDay.localeCompare('Unlimited') === 0){
+            price = price * 1.05;
+        }
+
+        //drivers's age
+        if(age.localeCompare('Under 25') === 0){
+            price = price * 1.05;
+        }
+        else if(age.localeCompare('Over 65') === 0){
+            price = price * 1.1;
+        }
+
+        //extra drivers
+        if(extraDrivers > 0){
+            price = price * 1.15;
+        }
+
+        //insurance
+        if(insurance){
+            price = price * 1.2;
+        }
+
+        //percentage of remaining cars
+        if(percRemainingCars < 10){
+            price = price * 1.1;
+        }
+
+        //frequent customer
+        if(this.isUserFrequent()){
+            price = price * 0.9;
+        }
+
+        return price;
+    }
+
+    isUserFrequent = () => {
+        let today = moment().format('YYYY-MM-DD');
+        let numRentals = this.state.userRentals.filter( r => moment(r.dateEnd, 'YYYY-MM-DD').isBefore(today) ).length;
+
+        return numRentals >= 3;
+    }
+
+    setShowPayModal = (bool) => {
+        this.setState({showPayModal: bool});
+
+        //if it's closing the modal, update the data (it could have changed if a new rental was successful)
+        if(bool === false){
+            this.updateAvailableCars();
+            this.updateUserRentals();
+        }
     }
 }

@@ -4,7 +4,7 @@ import * as api from './api.js'
 
 export default class LogoutButton extends React.Component {
     render(){
-        return <Button variant="outline-danger" className='ml-auto' onClick={() => {this.logout()}}>
+        return <Button variant="outline-danger" onClick={() => {this.logout()}}>
             Logout
         </Button>;
     }

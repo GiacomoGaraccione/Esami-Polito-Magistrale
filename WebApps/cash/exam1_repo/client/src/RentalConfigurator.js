@@ -62,7 +62,7 @@ export default class RentalConfigurator extends React.Component {
 
             <Form.Group controlId='extraDrivers'>
                 <Form.Label>Number of extra drivers:</Form.Label>
-                <Form.Control type='number' onChange={(event) => {this.onChangeDrivers(event);}}></Form.Control>
+                <Form.Control type='number' min='0' onChange={(event) => {this.onChangeDrivers(event);}}></Form.Control>
             </Form.Group>
 
             <Form.Group controlId='kmPerDay'>
@@ -84,9 +84,7 @@ export default class RentalConfigurator extends React.Component {
         </Form>
         </Col>
 
-        <Col className='text-center'>
-            <FormResults data={this.state} user={this.props.user}/>
-        </Col>
+        <FormResults data={this.state} user={this.props.user}/>
         </>;
     }
 
