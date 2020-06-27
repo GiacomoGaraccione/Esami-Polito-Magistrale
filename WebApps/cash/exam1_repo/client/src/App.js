@@ -49,7 +49,7 @@ class App extends React.Component {
           </Row>
 
           <Row className='align-items-center'>
-            <RentalConfigurator user={this.state.user}/>
+            <RentalConfigurator user={this.state.user} setLoggedIn={this.setLoggedIn}/>
           </Row>
 
       </Container>;

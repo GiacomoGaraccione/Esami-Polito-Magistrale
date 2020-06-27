@@ -51,23 +51,23 @@ export async function logout(){
 //given the form data, returns the list of available cars (list of ids)
 export async function getAvailableCars(category, begDate, endDate){
     const res = await fetch('/api/cars/available?category=' + category + '&begDate=' + begDate + '&endDate=' + endDate);
-    const resJ = await res.json();
     if(res.ok){
+        const resJ = await res.json();
         return resJ.map(j => j.id);
     }
     
-    let err = {status: res.status, errObj:resJ};
+    let err = {status: res.status, errObj:res};
     throw err;
 }
 
 export async function getUserRentals(user){
     const res = await fetch('/api/users/' + user + '/rentals');
-    const resJ = await res.json();
     if(res.ok){
+        const resJ = await res.json();
         return resJ.map(j => rentalFromJson(j));
     }
     
-    let err = {status: res.status, errObj:resJ};
+    let err = {status: res.status, errObj:res};
     throw err;
 }
 

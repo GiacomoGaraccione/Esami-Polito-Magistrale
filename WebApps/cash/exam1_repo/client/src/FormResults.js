@@ -29,7 +29,7 @@ export default class FormResults extends React.Component {
             </Alert>
 
             <Alert variant='info'>
-                Rental price: {this.calculateRentalPrice().toFixed(2) + ' €'}
+                {this.calculateRentalPrice()}
             </Alert>
 
             {this.state.availableCars.length > 0 && <Button variant='success' onClick={() => {this.setShowPayModal(true);}}>Submit</Button>}
@@ -127,6 +127,10 @@ export default class FormResults extends React.Component {
         })
         .catch((err) => {
             console.log('error in getting results from server:', err);
+            if (err.status === 401){
+                console.log('login token expired');
+                this.props.setLoggedIn(false);
+            }
         });
     }
 
@@ -135,7 +139,7 @@ export default class FormResults extends React.Component {
             return false;
         }
 
-        if(this.props.data.extraDrivers === undefined || this.props.data.extraDrivers.localeCompare("") === 0){
+        if(this.props.data.extraDrivers === ''){
             return false;
         }
 
@@ -155,7 +159,7 @@ export default class FormResults extends React.Component {
 
     calculateRentalPrice = () => {
         if(this.state.availableCars.length === 0){
-            return 0;
+            return <p>Price: N/A</p>;
         }
 
         let percRemainingCars = 100*this.state.availableCars.length/this.state.totCarsInCategory;
@@ -220,7 +224,19 @@ export default class FormResults extends React.Component {
             price = price * 0.9;
         }
 
-        return price;
+        let pricePerDay = price;
+    
+        let beg = moment(this.props.data.beginningDate, 'YYYY-MM-DD');
+        let end = moment(this.props.data.endDate, 'YYYY-MM-DD');
+        let nDays = end.diff(beg, 'days') + 1;
+
+        //return pricePerDay.toFixed(2) + ' € / day\n' + 'Total price: ' + (nDays * pricePerDay).toFixed(2) + ' €';
+        return <>
+            {pricePerDay.toFixed(2) + ' € / day'}
+            <br/>
+            <br/>
+            Total: {(nDays * pricePerDay).toFixed(2) + ' €'}
+        </>;
     }
 
     isUserFrequent = () => {

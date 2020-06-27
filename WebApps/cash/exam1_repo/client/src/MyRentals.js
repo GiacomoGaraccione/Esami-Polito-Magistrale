@@ -3,6 +3,8 @@ import * as api from './api.js'
 import Table from 'react-bootstrap/Table'
 import moment from 'moment';
 import CancelRentButton from './CancelRentButton.js'
+import Alert from 'react-bootstrap/Alert'
+import Col from 'react-bootstrap/Col'
 
 export default class MyRentals extends React.Component {
     constructor(props){
@@ -15,22 +17,55 @@ export default class MyRentals extends React.Component {
         if(this.state.cars.length === 0){
             return <p>Loading cars...</p>;
         }
+        else if(this.state.rentals.length === 0){
+            return <> 
+            <Col className='col-4'/>
+
+            <Col className='col-4'> 
+                <Alert variant='danger' className='text-center'>
+                    You have no current, past or future rentals.
+                </Alert>
+            </Col>
+
+            <Col className='col-4'/>
+            </>;
+        }
         else{
             return <>
-                <h4>Current rentals:</h4>
-                {this.createRentalList(this.filterCurrentRentals(), false)}
+            <Col>
+                {this.filterCurrentRentals().length > 0 && this.getCurrentRentals()}
 
-                <h4>Future rentals:</h4>
-                {this.createRentalList(this.filterFutureRentals(), true)}
+                {this.filterFutureRentals().length > 0 && this.getFutureRentals()}
 
-                <h4>Past rentals:</h4>
-                {this.createRentalList(this.filterPastRentals(), false)}
+                {this.filterPastRentals().length > 0 && this.getPastRentals()}
+            </Col>
             </>;
         }
     }
 
-    createRentalList = (rentals, isFuture) => {
-        return <Table borderless={true} hover={true} striped={true}>
+    getCurrentRentals = () => {
+        return <>
+            <h4>Current rentals:</h4>
+            {this.createRentalList(this.filterCurrentRentals(), false, 'success')}
+        </>;
+    }
+
+    getFutureRentals = () => {
+        return <>
+            <h4>Future rentals:</h4>
+            {this.createRentalList(this.filterFutureRentals(), true, 'info')}
+        </>;
+    }
+
+    getPastRentals = () => {
+        return <>
+            <h4>Past rentals:</h4>
+            {this.createRentalList(this.filterPastRentals(), false, 'secondary')}
+        </>;
+    }
+
+    createRentalList = (rentals, isFuture, color) => {
+        return <Table hover={true} bordered variant={color} striped={true}>
             <thead>
                 <tr>
                     <th>Date start</th>
@@ -106,6 +141,7 @@ export default class MyRentals extends React.Component {
         })
         .catch((err) => {
             console.log('error in getting rentals of user', err);
+            console.log(err.status);
         })
     }
 }

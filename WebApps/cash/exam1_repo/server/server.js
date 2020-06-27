@@ -7,7 +7,8 @@ const jwt = require('express-jwt');
 const jsonwebtoken = require('jsonwebtoken');
 
 const jwtSecret = 'nfRdfLgEKmpveusyJttWgisRR3ZkYaVsSOagpbLPgCNjH6BDOvS01vBkEL6HXlZIqTl1lbrJYvniVRECcU1TIuO8xExiWiAKRtG0BOAEc3aEQDvaZszXsovzAAr0rP';
-const expireTime = 1800;
+//const expireTime = 1800;
+const expireTime = 5;
 
 const PORT = 3001;
 const app = new express();
