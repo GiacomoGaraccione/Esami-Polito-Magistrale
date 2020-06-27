@@ -28,7 +28,7 @@ app.get("/vehicles", (req, res) => {
     })
     .catch((err) => {
       res.status(500).json({
-        errors: [{ msg: error }],
+        errors: [{ msg: err }],
       });
     });
 });
