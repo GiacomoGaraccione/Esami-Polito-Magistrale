@@ -24,9 +24,10 @@ export default class LoginForm extends React.Component {
 
   doLogin = (event) => {
     event.preventDefault();
-    console.log(event);
-    const username = event.target.elements.username.value;
-    const password = event.target.elements.password.value;
+    console.log(event.target.elements.loginFormUsername.value);
+    console.log(event.target.elements.loginFormPassword.value);
+    const username = event.target.elements.loginFormUsername.value;
+    const password = event.target.elements.loginFormPassword.value;
 
     API.login(username, password).then(() => {
       this.props.doLogin(username, password);

@@ -8,6 +8,7 @@ import { AppTitle, LoginButton } from "./CustomComponents.js";
 import { ShowVehicles } from "./VehicleComponents.js";
 import { Filters } from "./Filters.js";
 import LoginForm from "./LoginForm.js";
+import RentalConfigurator from "./RentalConfigurator.js";
 
 class App extends React.Component {
   constructor(props) {
@@ -153,31 +154,57 @@ class App extends React.Component {
   };
 
   render() {
-    return (
-      <Container fluid>
-        <Switch>
-          <Route path="/private">
-            <AppTitle />
-          </Route>
-          <Route path="/home">
-            <AppTitle />
-            <LoginButton />
-            <Filters
-              vehicles={this.state.vehicles}
-              vehiclesFiltered={this.state.vehiclesFiltered}
-              brands={this.state.brands}
-              onClickCatFilter={this.onClickCatFilter}
-              onClickBrandFilter={this.onClickBrandFilter}
-            />
-            <ShowVehicles vehiclesShow={this.state.vehiclesShow} />
-          </Route>
-          <Route path="/login">
-            <AppTitle />
-            <LoginForm loggedIn={this.doLogin} />
-          </Route>
-        </Switch>
-      </Container>
-    );
+    console.log("Home: ");
+    console.log(this.state.loggedIn);
+    if (this.state.loggedIn === true) {
+      return (
+        <Container fluid>
+          <Switch>
+            <Route path="/logged">
+              <AppTitle loggedIn={this.state.loggedIn} />
+              <Filters
+                vehicles={this.state.vehicles}
+                vehiclesFiltered={this.state.vehiclesFiltered}
+                brands={this.state.brands}
+                onClickCatFilter={this.onClickCatFilter}
+                onClickBrandFilter={this.onClickBrandFilter}
+              />
+              <ShowVehicles vehiclesShow={this.state.vehiclesShow} />
+            </Route>
+            <Route path="/login">
+              <AppTitle loggedIn={this.state.loggedIn} />
+            </Route>
+            <Route path="/rental">
+              <AppTitle loggedIn={this.state.loggedIn} />
+              <RentalConfigurator username={this.state.username} />
+            </Route>
+          </Switch>
+        </Container>
+      );
+    } else {
+      return (
+        <Container fluid>
+          <Switch>
+            <Route path="/home">
+              <AppTitle loggedIn={this.state.loggedIn} />
+              <LoginButton loggedIn={this.state.loggedIn} />
+              <Filters
+                vehicles={this.state.vehicles}
+                vehiclesFiltered={this.state.vehiclesFiltered}
+                brands={this.state.brands}
+                onClickCatFilter={this.onClickCatFilter}
+                onClickBrandFilter={this.onClickBrandFilter}
+              />
+              <ShowVehicles vehiclesShow={this.state.vehiclesShow} />
+            </Route>
+            <Route path="/login">
+              <AppTitle loggedIn={this.state.loggedIn} />
+              <LoginForm doLogin={this.doLogin} />
+            </Route>
+          </Switch>
+        </Container>
+      );
+    }
   }
 }
 export default App;

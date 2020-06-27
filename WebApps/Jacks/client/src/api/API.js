@@ -34,7 +34,7 @@ async function login(username, password) {
     fetch("/login", {
       method: "POST",
       headers: {
-        ContentType: "application/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ username: username, password: password }),
     })
@@ -54,5 +54,60 @@ async function login(username, password) {
   });
 }
 
-const API = { getVehicles, getBrands, login };
+async function getAvailableVehicles(category, startingDay, endingDay) {
+  let url =
+    "/vehicles/available?category=" +
+    category +
+    "&startingDay=" +
+    startingDay +
+    "&endingDay=" +
+    endingDay;
+
+  const response = await fetch(url);
+  const aVJson = await response.json();
+
+  if (response.ok) {
+    return aVJson;
+  } else {
+    let err = { status: response.status, errObj: aVJson };
+    throw err;
+  }
+}
+
+async function getUser(username) {
+  let url = "/user/present?username=" + username;
+
+  const response = await fetch(url);
+  const userJson = await response.json();
+
+  if (response.ok) {
+    return userJson;
+  } else {
+    let err = { status: response.status, errObj: userJson };
+    throw err;
+  }
+}
+
+async function getVehiclesInCategory(category) {
+  let url = "/vehicles/remaining?category=" + category;
+
+  const response = await fetch(url);
+  const vICJson = await response.json();
+
+  if (response.ok) {
+    return vICJson;
+  } else {
+    let err = { status: response.status, errObj: vICJson };
+    throw err;
+  }
+}
+
+const API = {
+  getVehicles,
+  getBrands,
+  login,
+  getAvailableVehicles,
+  getUser,
+  getVehiclesInCategory,
+};
 export default API;
