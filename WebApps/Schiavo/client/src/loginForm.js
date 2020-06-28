@@ -43,9 +43,6 @@ class LoginForm extends React.Component{
                 </Form>
             </Container>
         );
-            
-    
-        
     }
     
 }

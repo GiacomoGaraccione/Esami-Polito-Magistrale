@@ -7,7 +7,7 @@ const cookieParser = require('cookie-parser');
 const jwt = require('express-jwt');
 const morgan = require('morgan');
 const PORT = 3001;
-const expireTime=10; //seconds =20 min
+const expireTime=1200; //seconds =20 min
 const jwtSecret="5uCcFWsuN6kVF2ziH6HClGIvZxT_8v8aZQUbfwyJ9fEJwaygawGCZBZpwMhIK79_m0iuUgOKmXRClQSoyJPduOFNzDMEK1oTJruz1gQvutw7UumYBBXFn7wXzcaEDCDkA7siSghUamDKZyMWymF5fnCVx_f_uTueZ4MxCnyRUKc"
 const authErrorObj = { errors: [{  'param': 'Server', 'msg': 'Authorization error' }] };
 
@@ -54,7 +54,6 @@ app.listen(PORT, ()=>console.log(`Server running on http://localhost:${PORT}/`))
               });
         } else {
             if(user.password !== password){
-                console.log(user.password)
                 res.status(401).send({
                     errors: [{ 'param': 'Server', 'msg': 'Wrong password' }] 
                   });
@@ -63,7 +62,6 @@ app.listen(PORT, ()=>console.log(`Server running on http://localhost:${PORT}/`))
                 //CHECK IF USER HAS BECOME Frequent
                 if(user.frequentCustomer==="false"){
                     rentDao.countRent(username).then((r)=>{
-                        console.log(r)
                         if(r.count>=3){
                             user.frequentCustomer="true" // update user passed to client
                             userDao.updateFrequent(username); // update user in database
@@ -73,7 +71,7 @@ app.listen(PORT, ()=>console.log(`Server running on http://localhost:${PORT}/`))
                 }
                 const token = jsonwebtoken.sign({ user: user.id }, jwtSecret, {expiresIn: expireTime});
                 res.cookie('token', token, { httpOnly: true, sameSite: true, maxAge: 1000*expireTime });
-                res.json({mail: user.email, password:user.password, frequent:user.frequentCustomer, fullname:user.fullName, cardNumber:user.cardNumber, cvv:user.cvv});
+                res.json({mail: user.email, password:user.password, frequent:user.frequentCustomer});
             }
         } 
       }).catch(
@@ -98,8 +96,8 @@ app.use(
     })
   );
 
-  app.post('/rent',(req,res)=>{
-    const mail = req.body.mail; 
+  app.get('/rent/:mail',(req,res)=>{
+    const mail = req.params.mail 
     rentDao.getUserRent(mail)
     .then((rents)=>{
          res.json(rents);
@@ -133,7 +131,7 @@ app.use(
 
   app.delete('/rent/delete/:rentId', (req,res)=>{
       rentDao.deleteRent(req.params.rentId)
-      .then((result)=> res.status(204).end())
+      .then(()=> res.status(204).end())
       .catch((err)=> res.status(500).json({
           errors: [{"param":"serevr","msg":err}]
       }))

@@ -42,21 +42,14 @@ async function getBrands(){
 }
 
 async function getRents(mail){
-    return new Promise((resolve,reject)=>{
-        fetch('/rent',{method:'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({mail:mail})
-    }).then((response)=>{
-        if(response.ok){
-            response.json().then((rents)=> {rents.map((r)=> new Rent(r))
-            resolve(rents);
-        })
-        }
-        else{
-            // return error status
-            reject(response.status);
-                
-        }
-    }).catch((err) => { reject({ errors: [{ param: "Server", msg: "Cannot communicate" }] }) }); // connection errors
-    })
+    const response = await fetch('/rent/'+mail);
+    if(response.ok){
+        const rentsJson = await response.json();
+        return (rentsJson.map((r)=> new Rent(r.userEmail,r.id,r.startingDay,r.endDay,r.carPlate,r.driversAge,r.extraDrivers,r.kilometers,r.insurance,r.price)))
+    }
+    
+    let err = {status: response.status, errObj:response};
+    throw err;
 }
 
 async function computeAvailability(category,start,end){
@@ -112,7 +105,6 @@ async function deleteRent(rentId){
     }
 
 async function addRent(rent){
-    console.log(rent);
     return new Promise((resolve,reject)=>{
         fetch('/rent/add', {method:'POST',headers: {'Content-Type': 'application/json'}, body: JSON.stringify(rent),
         })
@@ -137,7 +129,6 @@ async function pay(amount){
     }
     else{
      let err =response.status;
-     console.log(err);
      throw err;
  }
 }

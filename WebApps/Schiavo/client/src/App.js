@@ -7,7 +7,7 @@ import Payment from "./payment";
 import {Route} from 'react-router-dom';
 import {Switch,withRouter} from 'react-router-dom';
 import './App.css';
-import {AppTitle,DisplayCar} from "./reactComponents";
+import {AppTitle,DisplayCar, ShowPic} from "./reactComponents";
 import API from "./API";
 
 
@@ -15,7 +15,7 @@ class App extends React.Component {
 
   constructor(props){
     super(props);
-    this.state= {DBCars:[], cars:[], brands:[], selectedCategories:[],selectedBrands:[], login: false, rent:"", payed:""};
+    this.state= {DBCars:[], cars:[], brands:[], selectedCategories:[],selectedBrands:[], login: false, rent:"", payed:false};
   }
 
   componentDidMount(){
@@ -37,8 +37,6 @@ class App extends React.Component {
       let i= categoriesArray.indexOf(c);
       categoriesArray.splice(i,1);
     }
-
-    console.log("cliccato "+c+" brands="+brandsArray+" categories= "+categoriesArray)
 
     if(categoriesArray.length !== 0){ //if some category is selected
       if(brandsArray.length === 0){   //but any brand in selected
@@ -101,7 +99,6 @@ class App extends React.Component {
       let i= brandsArray.indexOf(b);
       brandsArray.splice(i,1);
     }
-    console.log("cliccato "+b+" brands= "+brandsArray+" categories= "+categoriesArray)
     if(brandsArray.length !== 0){ //if some brand is selected
       if(categoriesArray.length === 0){   //but any category in selected
         for(let i=0; i<brandsArray.length;i++){
@@ -149,12 +146,17 @@ class App extends React.Component {
   addRent=(rent)=>{
     API.addRent(rent).then(()=>{
       this.props.history.push("/private");
+      console.log("rent aggiunto, dovrebbe settare a true")
+      this.setState({payed:true})
     }).catch((r)=>{
       if(r ===401){
       this.unauthorized()} 
      });
     
 }
+  paymentComplete=()=>{
+    this.setState({payed:false});
+  }
 
   payment=(rent)=>{
     this.setState(()=> ({rent:rent}))
@@ -190,13 +192,14 @@ class App extends React.Component {
             <RentForm user={this.state.login} unauthorized={this.unauthorized}/>
         </Route>
         <Route path="/private">
-            <PrivateForm  unauthorized={this.unauthorized} payed={this.state.payed} price={this.state.price} user={this.state.login} cars={this.state.cars} payment={this.payment} logout={this.logout}/>
+            <PrivateForm  unauthorized={this.unauthorized} payed={this.state.payed} paymentComplete={this.paymentComplete} price={this.state.price} user={this.state.login} cars={this.state.cars} payment={this.payment} logout={this.logout}/>
           </Route>
           <Route path="/login">
             <LoginForm login={this.login}/>
           </Route> 
           <Route path="/home">
             <AppTitle/>
+            <ShowPic/>
             <DisplayCar cars={this.state.cars} brands={this.state.brands} filterByCategory={this.filterByCategory} filterByBrand={this.filterByBrand}/>
           </Route>
         </Switch>

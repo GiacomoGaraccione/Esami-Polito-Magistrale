@@ -30,13 +30,13 @@ class Payment extends React.Component{
 
                 <Form.Group>
                     <Form.Label>Full name</Form.Label>
-                    <Form.Control placeholder ="Insert here your full name" required/>
+                    <Form.Control type="text" placeholder ="Insert here your full name" required/>
                     <Form.Text></Form.Text>
                     <Form.Label>CardNumber</Form.Label>
-                    <Form.Control placeholder ="XXXX-XXXX-XXXX-XXXX" required/>
+                    <Form.Control type="number" placeholder ="XXXX-XXXX-XXXX-XXXX" required/>
                     <Form.Text>With us your information are safe</Form.Text>
                     <Form.Label>CVV</Form.Label>
-                    <Form.Control  placeholder="XXX" required/>
+                    <Form.Control  type="number" placeholder="XXX" required/>
                 </Form.Group>
                 <Button type="submit" >Confirm and Pay</Button>
                 </Form>

@@ -1,7 +1,8 @@
 import React from "react";
 import moment from "moment";
 import API from "./API.js";
-import {Table,Container, Button} from 'react-bootstrap';
+import {Table,Container, Button, Alert} from 'react-bootstrap';
+import { ShowPic } from "./reactComponents.js";
 
 
 function RentRow(props){
@@ -13,7 +14,7 @@ function RentRow(props){
             <td>{props.rent.endDay}</td>
             <td>{props.rent.carPlate}</td>
             <td>{props.rent.price}</td>
-    <td> Reserved Rent <Button onClick ={()=>{props.deleteRent(props.rent.id)}}>Delete</Button></td>
+            <td> Reserved Rent <Button onClick ={()=>{props.deleteRent(props.rent.id)}}>Delete</Button></td>
             </tr>
     )}
     else if(moment(props.rent.endDay).isBefore(today,"day")){
@@ -50,7 +51,7 @@ class RentForm extends React.Component{
             this.setState({rents:r})
         })
         .catch((r)=>{
-             if(r ===401){
+             if(r.status ===401){
              this.props.unauthorized()} 
             });
     }
@@ -60,9 +61,9 @@ class RentForm extends React.Component{
         API.deleteRent(id)
         .then(()=>{
             API.getRents(this.props.user.mail).then((r)=>{
-                this.setState({rents:r})
+                this.setState({rents:r}).then(this.forceUpdate());
             }).catch((r)=>{
-                if(r ===401){
+                if(r.status ===401){
                 this.props.unauthorized()} 
                });
         }).catch((r)=>{
@@ -72,6 +73,7 @@ class RentForm extends React.Component{
     }
 
     render(){
+        if(this.state.rents.length!==0){
         return (
             <Container fluid>
             <nav className="navbar navbar-light bg-light" href="/home">
@@ -85,16 +87,29 @@ class RentForm extends React.Component{
                 <th className='col-2'>Ending Day</th>
                 <th className='col-2'>Car</th>
                 <th className='col-2'>Price</th>
-                <th className='col-1'>Delete rent</th>
+                <th className='col-1'>Rent Status</th>
               </tr>
             </thead>
             <tbody>{
-                this.state.rents.map((r)=><RentRow rent={r} deleteRent={this.deleteRent}/>)     
+                this.state.rents.map((r)=><RentRow key={r.id} rent={r} deleteRent={this.deleteRent}/>)     
             }
             </tbody>
           </Table>
           </Container>
         )
+        }
+        else{
+            return(<>
+                <nav className="navbar navbar-light bg-light" href="/home">
+                    <a className="navbar-brand" href="/home">EZRental</a>
+                </nav>
+                <Alert variant="warning">
+                    <Alert.Heading>Your rent history is empty !</Alert.Heading>
+                </Alert>
+                <ShowPic/>
+                </>
+            )
+        }
     }
     
 

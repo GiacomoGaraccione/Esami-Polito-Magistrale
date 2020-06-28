@@ -5,12 +5,7 @@ const createUser = function (row) {
     const email = row.email;
     const password= row.password;
     const frequentCustomer= row.frequent_customer;
-    const fullName= row.full_name;
-    const cardNumber= row.card_number;
-    const cvv = row.cvv;
-
-   
-    return new User(email,password,frequentCustomer,fullName,cardNumber,cvv);
+    return new User(email,password,frequentCustomer);
 }
 
 exports.getUser = function (email) {

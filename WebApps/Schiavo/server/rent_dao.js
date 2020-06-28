@@ -28,7 +28,6 @@ exports.getUserRent= function(mail){
                 resolve(undefined);
             }
             else{
-                console.log(rows);  
                 const rents = rows.map((row)=> createRent(row))
                 resolve(rents);
             }

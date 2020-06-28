@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink} from 'react-router-dom';
-import { Button,ButtonGroup ,Form,Table} from 'react-bootstrap';
+import { Button,ButtonGroup ,Form,Table, Carousel,Alert} from 'react-bootstrap';
 
 
 function AppTitle(){
@@ -12,6 +12,64 @@ function AppTitle(){
         </nav>;
 
 };
+
+function ShowPic(){
+    return(
+        <Carousel align="center" interval ={2000} slide={false} keyboard={true}> 
+            <Carousel.Item>
+                <img src={require("./img/1.jpg")} alt=""/>
+            </Carousel.Item>
+            <Carousel.Item>
+                <img src={require("./img/2.jpg")} alt=""/>
+            </Carousel.Item>
+            <Carousel.Item>
+                <img src={require("./img/3.jpg")} alt=""/>
+            </Carousel.Item>
+            <Carousel.Item>
+                <img src={require("./img/4.jpg")} alt=""/>
+            </Carousel.Item>
+            <Carousel.Item>
+                <img src={require("./img/5.jpg")} alt=""/>
+            </Carousel.Item>
+            <Carousel.Item>
+                <img src={require("./img/6.jpg")} alt=""/>
+            </Carousel.Item>
+            <Carousel.Item>
+                <img src={require("./img/7.jpg")} alt=""/>
+            </Carousel.Item>
+            <Carousel.Item>
+                <img src={require("./img/8.jpg")} alt=""/>
+            </Carousel.Item>
+            <Carousel.Item>
+                <img src={require("./img/9.jpg")} alt=""/>
+            </Carousel.Item>
+            <Carousel.Item>
+                <img src={require("./img/10.jpg")} alt=""/>
+            </Carousel.Item>
+            <Carousel.Item>
+                <img src={require("./img/11.jpg")} alt=""/>
+            </Carousel.Item>
+            <Carousel.Item>
+                <img src={require("./img/12.jpg")} alt=""/>
+            </Carousel.Item>
+            <Carousel.Item>
+                <img src={require("./img/13.jpg")} alt=""/>
+            </Carousel.Item>
+            <Carousel.Item>
+                <img src={require("./img/14.jpg")} alt=""/>
+            </Carousel.Item>
+            <Carousel.Item>
+                <img src={require("./img/15.jpg")} alt=""/>
+            </Carousel.Item>
+            <Carousel.Item>
+                <img src={require("./img/16.jpg")} alt=""/>
+            </Carousel.Item>
+            <Carousel.Item>
+                <img src={require("./img/17.jpg")} alt=""/>
+            </Carousel.Item>
+        </Carousel>
+    )
+}
 
 function DisplayCarFilters(props){
     return( 
@@ -26,11 +84,11 @@ function DisplayCarFilters(props){
                     ev.target.classList.add('active');
                 }
                 }}>
-                <Button value="A">Category A</Button>
-                <Button value="B">Category B</Button>
-                <Button value="C">Category C</Button>
-                <Button value="D">Category D</Button>
-                <Button value="E">Category E</Button>
+                <Button variant="outline-primary" value="A">Category A</Button>
+                <Button variant="outline-primary" value="B">Category B</Button>
+                <Button variant="outline-primary" value="C">Category C</Button>
+                <Button variant="outline-primary" value="D">Category D</Button>
+                <Button variant="outline-primary" value="E">Category E</Button>
             </ButtonGroup>
             
             <Form.Label>Select one or more brands :</Form.Label>
@@ -43,30 +101,38 @@ function DisplayCarFilters(props){
                     ev.target.classList.add('active');
                 }
                 }}>
-                {props.brands.map((b)=> <Button key ={b} value ={b}> {b}</Button>)}
+                {props.brands.map((b)=> <Button variant="outline-primary" key ={b} value ={b}> {b}</Button>)}
             </ButtonGroup>
             
     </Form>
     )}
 
 function CarList(props){
-        return <Table bordered responsive>
-        <thead>
-        <tr>
-            <th className='col-2'>Brand</th>
-            <th className='col-2'>Model</th>
-            <th className='col-2'>Category</th>
-            <th className='col-2'>Seats</th>
-        </tr>
-        </thead>
-        <tbody>{
-               props.cars.map((c) => <CarRow key={c.plate} cars={c}/>)
-            }
-            </tbody>
-    </Table>
+        if(props.cars.length === 0){
+            return(
+                <Alert variant="warning">
+                    <Alert.Heading>No cars available with selected filters</Alert.Heading>
+                </Alert>
+            )
+        }
+        else{
+            return( 
+            <Table bordered responsive>
+                <thead>
+                    <tr>
+                        <th className='col-2'>Brand</th>
+                        <th className='col-2'>Model</th>
+                        <th className='col-2'>Category</th>
+                        <th className='col-2'>Seats</th>
+                    </tr>
+                </thead>
+                <tbody>{
+                    props.cars.map((c) => <CarRow key={c.plate} cars={c}/>)}
+                </tbody>
+            </Table>
 
 
-
+            )}
 }
 
 function CarRow(props){
@@ -86,4 +152,4 @@ function CarRow(props){
  };
 
 
- export {DisplayCar,AppTitle}
+ export {DisplayCar,AppTitle,ShowPic}

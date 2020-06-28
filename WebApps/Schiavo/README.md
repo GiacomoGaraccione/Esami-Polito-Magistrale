@@ -1,24 +1,43 @@
-# Exam #12345: "Exam Title"
-## Student: s123456 LASTNAME FIRSTNAME 
+# Exam #1: "Car Rental"
+## Student: s280146 Schiavolini Federico
 
 ## React client application routes
 
-- Route `/`: page content and purpose
-- Route `/something/:param`: page content and purpose, param specification
-- ...
-
+- Route `/home`: display functions for unregistered users. 
+- Route `/login`: a registered user can perform login.
+- Route `/private`: this is the route of the configurator, here user can see his rents, configure a new one and perform a logout.
+- Route `/private/rent`: here a user can see his own rents and delete the future ones
+- Route `/private/payment`: here a user can pay for his rent. 
 ## REST API server
 
+- GET `/brands`
+  - request parameters: none
+  - response body: list of all brands
+- GET `/cars`
+  - request parameters: none
+  - response body: list of all cars
 - POST `/login`
-  - request parameters and request body content
-  - response body content
-- GET `/api/something`
-  - request parameters
-  - response body content
-- POST `/api/something`
-  - request parameters and request body content
-  - response body content
-- ...
+  - request parameters: none request body = username and password
+  - response body: user that made the login request
+- POST `/logout`
+  - request parameters: none
+  - response body content: none
+- GET `/rent/:mail`
+  - request parameters: mail of the user that made the request
+  - response body content: list of rents made by user that made the request
+- POST `/rent/add`
+  - request parameters: none request body: all the propertis of the rent to add
+  - response body: "true"
+- POST `/availability`
+  - request parameters: none request body: category, starting date and end date
+  - response body: list of cars available according to parameters
+- DELETE `/rent/delete/:rentId`
+  - request parameters: ID of rent to delete request body: none
+  - response body: none
+- GET `/payment`
+  - request parameters: amount to pay
+  - response body: "true"
+- ... All APIs after login require a valid JWT
 
 ## Server database
 
