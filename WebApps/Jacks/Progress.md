@@ -48,15 +48,26 @@
 - Aggiornato calcolo prezzi(sconto user frequente funziona)
 - Calcolo prezzi finito
   
+## 27/6/20
+
+- Aspetto non più osceno
+- Aggiunta conferma di rent e pagamento con API (rivedere API di inserimento in tabella di nuovo rent)
+- Iniziato a lavorare su pagina dei rent
+
+## 28/6/20 (MADONNAAAAAAAAAAAAAAAA oggi ci giochiamo tutto Renato)
+
+- Pagina dei rent completata (ovvero, mostra i rent senza fare distinzioni tra passati, correnti e futuri)
+- Filtri corretti (grazie DiddyCN)
 
 ## Next steps (immediati)
 
-- Conferma rent e pagamento(con API di conseguenza)
+- Logout e cookie per il login
+- Sistemare le navbar per le varie pagine
 
   
 ## Next steps (più lontani)
 
-- Filtri: mostrare quali sono scelti (facile? in teoria react bootstrap ha una proprietà utile) e gestire interazione (se si ha un filtro cat e uno br attivi e si sceglie di filtrare per cat funziona, ma se si sceglie un'altra cat valida questa non appare (A, E, E => filtra per E: E, E => filtra per A: E, E al posto di A, E, E))
-- Rendere l'applicazione non vomitevole
+- Ormai siamo all'ultimo giorno
+- Rivedere tutto e assicurarsi funzioni
 
 
