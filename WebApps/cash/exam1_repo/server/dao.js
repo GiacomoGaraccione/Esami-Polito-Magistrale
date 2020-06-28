@@ -158,3 +158,24 @@ exports.deleteRental = async function(id){
         })
     } );
 }
+
+exports.isUserPresent = async function(userName){
+    return new Promise( (resolve, reject) => {
+        const sql = 'select count(*) from users where username = ?';
+
+        db.get(sql, [userName], (err, row) => {
+            if(err){
+                console.log('dao.js database error in isUserPresent');
+                reject(err);
+            }
+            else{
+                if(row['count(*)'] === 0){
+                    resolve(false);
+                }
+                else{
+                    resolve(true);
+                }
+            }
+        })
+    } )
+}

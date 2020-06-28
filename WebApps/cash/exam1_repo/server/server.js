@@ -135,7 +135,19 @@ app.delete('/api/rentals/:id', (req, res) => {
 app.get('/api/user', (req, res) => {
     const user = req.user && req.user.user; 
 
-    res.json(user);
+    dao.isUserPresent(user)
+    .then((response) => {
+        if(response){
+            res.json(user);
+        }
+        else{
+            res.status(401).end();
+        }
+    })
+    .catch((err) => {
+        console.log('server.js database error in /api/user', err);
+        res.end();
+    });
 });
 
 app.listen(PORT, ()=>console.log(`Server running on http://localhost:${PORT}/`));
