@@ -41,6 +41,7 @@ export default class FormResults extends React.Component {
                 setShow={this.setShowPayModal} 
                 dateBeg={this.props.data.beginningDate} 
                 dateEnd={this.props.data.endDate}
+                setLoggedIn={this.props.setLoggedIn}
             />
 
         </Col>
@@ -86,6 +87,10 @@ export default class FormResults extends React.Component {
         })
         .catch((err) => {
             console.log('error in getting rentals of user', err);
+            if(err.status === 401){
+                console.log('cookie expired, logging out');
+                this.props.setLoggedIn(false);
+            }
         })
     }
 

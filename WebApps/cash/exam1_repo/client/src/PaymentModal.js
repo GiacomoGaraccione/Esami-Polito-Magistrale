@@ -79,12 +79,20 @@ export default class PaymentModal extends React.Component {
             .then(() => {
                 console.log('new rental posted successfully');
             }) 
-            .catch(() => {
-                console.log('error in posting new rental');
+            .catch((err) => {
+                console.log('error in posting new rental', err);
+                if(err.status === 401){
+                    console.log('cookie expired, logging out');
+                    this.props.setLoggedIn(false);
+                }
             })
         })
-        .catch(() => {
-            console.log('error in sending payment information');
+        .catch((err) => {
+            console.log('error in sending payment information', err);
+            if(err.status === 401){
+                console.log('cookie expired, logging out');
+                this.props.setLoggedIn(false);
+            }
         });
     }
 }

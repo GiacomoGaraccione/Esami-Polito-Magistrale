@@ -7,8 +7,7 @@ const jwt = require('express-jwt');
 const jsonwebtoken = require('jsonwebtoken');
 
 const jwtSecret = 'nfRdfLgEKmpveusyJttWgisRR3ZkYaVsSOagpbLPgCNjH6BDOvS01vBkEL6HXlZIqTl1lbrJYvniVRECcU1TIuO8xExiWiAKRtG0BOAEc3aEQDvaZszXsovzAAr0rP';
-//const expireTime = 1800;
-const expireTime = 5;
+const expireTime = 1800;
 
 const PORT = 3001;
 const app = new express();
@@ -129,6 +128,14 @@ app.delete('/api/rentals/:id', (req, res) => {
         console.log('error in server.js deleting rental');
         res.status(500).json({error: 'error in deleting the rental'});
     })
+});
+
+//GET /user
+//returns the current user
+app.get('/api/user', (req, res) => {
+    const user = req.user && req.user.user; 
+
+    res.json(user);
 });
 
 app.listen(PORT, ()=>console.log(`Server running on http://localhost:${PORT}/`));

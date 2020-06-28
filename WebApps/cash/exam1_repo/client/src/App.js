@@ -7,6 +7,7 @@ import CustomNavBar from './CustomNavBar.js'
 import InteractableCarList from './InteractableCarList.js'
 import RentalConfigurator from './RentalConfigurator.js'
 import MyRentals from './MyRentals.js';
+import * as api from './api.js'
 
 class App extends React.Component {
   constructor(props){
@@ -25,12 +26,13 @@ class App extends React.Component {
                 setLoggedIn={this.setLoggedIn} 
                 myRentals={this.state.myRentalsPage} 
                 setMyRentals={this.setMyRentalsPage}
+                user={this.state.user}
               />
             </Col>
           </Row>
 
           <Row>
-            <MyRentals user={this.state.user}/>
+            <MyRentals user={this.state.user} setLoggedIn={this.setLoggedIn}/>
           </Row>
 
   </Container>;
@@ -44,6 +46,7 @@ class App extends React.Component {
                 setLoggedIn={this.setLoggedIn} 
                 myRentals={this.state.myRentalsPage} 
                 setMyRentals={this.setMyRentalsPage}
+                user={this.state.user}
               />
             </Col>
           </Row>
@@ -64,6 +67,7 @@ class App extends React.Component {
                 setLoggedIn={this.setLoggedIn}
                 myRentals={this.state.myRentalsPage} 
                 setMyRentals={this.setMyRentalsPage}
+                user={this.state.user}
               />
             </Col>
           </Row>
@@ -74,6 +78,17 @@ class App extends React.Component {
       </Container>
       );
     }
+  }
+
+  componentDidMount = () => {
+    api.isAuthenticated()
+    .then((user) => {
+      console.log('current logged user: ' + user);
+      this.setState({loggedIn: true, user: user});
+    })
+    .catch((err) => {
+      console.log('no user is logged in', err);
+    })
   }
 
   setLoggedIn = (bool, user) => {

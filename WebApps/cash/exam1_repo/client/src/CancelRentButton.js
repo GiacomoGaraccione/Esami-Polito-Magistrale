@@ -16,8 +16,12 @@ export default class CancelRentButton extends React.Component {
         .then(() => {
             this.props.updateUserRentals();
         })
-        .catch(() => {
-            console.log('error in deleting rental');
+        .catch((err) => {
+            console.log('error in deleting rental', err);
+            if(err.status === 401){
+                console.log('cookie expired, logging out');
+                this.props.setLoggedIn(false);
+            }
         });
     }
 }

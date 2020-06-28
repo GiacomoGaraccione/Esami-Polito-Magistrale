@@ -119,7 +119,11 @@ export default class MyRentals extends React.Component {
             <td>{r.dateEnd}</td>
             <td>{cat}</td>
             <td>{brand + ' - ' + model}</td>
-            {isFuture && <td><CancelRentButton rentalId={r.id} updateUserRentals={this.updateUserRentals}/></td>}
+            {isFuture && <td><CancelRentButton 
+                                rentalId={r.id} 
+                                setLoggedIn={this.props.setLoggedIn} 
+                                updateUserRentals={this.updateUserRentals}
+                                /></td>}
         </tr>;
     }
 
@@ -141,7 +145,10 @@ export default class MyRentals extends React.Component {
         })
         .catch((err) => {
             console.log('error in getting rentals of user', err);
-            console.log(err.status);
+            if(err.status === 401){
+                console.log('cookie expired, logging out');
+                this.props.setLoggedIn(false);
+            }
         })
     }
 }

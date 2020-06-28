@@ -84,8 +84,13 @@ export async function sendPaymentInformation(cardNumber, name, cvv){
             },
             body: JSON.stringify({cardNumber: cardNumber, name: name, cvv: cvv})
         })
-        .then(() => {
-            resolve();
+        .then((res) => {
+            if (res.ok){
+                resolve();
+            }
+            else{
+                reject(res);
+            }
         })
         .catch((err) => {
             reject(err);
@@ -102,8 +107,13 @@ export async function postNewRental(carId, dateBeginning, dateEnd, username){
             },
             body: JSON.stringify({carId: carId, dateBeginning: dateBeginning, dateEnd: dateEnd, username: username})
         })
-        .then(() => {
-            resolve();
+        .then((res) => {
+            if(res.ok){
+                resolve();
+            }
+            else{
+                reject(res);
+            }
         })
         .catch((err) => {
             reject(err);
@@ -120,7 +130,7 @@ export async function deleteRental(id){
             }
             else{
                 console.log('error in api.js in deleting a rental');
-                reject();
+                reject(res);
             }
         })
         .catch(() => {
@@ -128,4 +138,16 @@ export async function deleteRental(id){
             reject();
         })
     } );
+}
+
+export async function isAuthenticated(){
+    const res = await fetch('/api/user');
+    if (res.ok){
+        const resJ = await res.json();
+        return resJ;
+    }
+    else{
+        let err = {status: res.status};
+        throw err;
+    }
 }
