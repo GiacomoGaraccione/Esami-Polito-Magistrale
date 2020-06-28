@@ -1,6 +1,9 @@
 import React from "react";
 import moment from "moment";
 import API from "./api/API.js";
+import Alert from "react-bootstrap/Alert";
+import PaymentModal from "./PaymentModal.js";
+import Button from "react-bootstrap/Button";
 
 export default class ConfiguratorResults extends React.Component {
   constructor(props) {
@@ -9,9 +12,13 @@ export default class ConfiguratorResults extends React.Component {
     this.state = {
       vehicles: [],
       availableVehicles: undefined,
+      availableVehiclesId: [],
       canRequestRent: false,
       isUserFrequent: false,
       totalCategoryVehicles: undefined,
+      canSubmit: false,
+      canShowModal: false,
+      user: undefined,
     };
   }
 
@@ -21,6 +28,7 @@ export default class ConfiguratorResults extends React.Component {
     });
     API.getUser(this.props.username)
       .then((u) => {
+        this.setState({ user: u });
         if (u.frequent === 1) {
           this.setState({ isUserFrequent: true });
         }
@@ -48,7 +56,11 @@ export default class ConfiguratorResults extends React.Component {
     } else {
       API.getAvailableVehicles(category, startingDay, endingDay)
         .then((v) => {
-          this.setState({ availableVehicles: v, canRequestRent: true });
+          this.setState({
+            availableVehicles: v,
+            canRequestRent: true,
+            canSubmit: true,
+          });
         })
         .catch((err) => {
           console.log("There has been an error in contacting the server:", err);
@@ -56,6 +68,13 @@ export default class ConfiguratorResults extends React.Component {
       API.getVehiclesInCategory(category)
         .then((v) => {
           this.setState({ remainingCategoryVehicles: v });
+        })
+        .catch((err) => {
+          console.log("There has been an error in contacting the server:", err);
+        });
+      API.getAvailableVehiclesId(category, startingDay, endingDay)
+        .then((v) => {
+          this.setState({ availableVehiclesId: v });
         })
         .catch((err) => {
           console.log("There has been an error in contacting the server:", err);
@@ -109,6 +128,9 @@ export default class ConfiguratorResults extends React.Component {
     let totalCV = this.state.totalCategoryVehicles;
     let remainingCVPercentage = 0;
     let availableVehicles = this.state.availableVehicles;
+    let startingDay = moment(this.props.input.startingDay);
+    let endingDay = moment(this.props.input.endingDay);
+    let days = endingDay.diff(startingDay, "days") + 1;
 
     switch (category) {
       case "A":
@@ -177,13 +199,21 @@ export default class ConfiguratorResults extends React.Component {
       (pricePerDay * frequentUserPercentage) / 100 +
       (pricePerDay * remainingCVPercentage) / 100;
 
+    finalPrice = finalPrice * days;
+
     return finalPrice;
+  };
+
+  setShowModal = (value) => {
+    this.setState({ canShowModal: value });
   };
 
   render() {
     if (!this.allParametersValid()) {
       //message shown when parameters are still missing (not inserted by user)
-      return <p> Please insert all mandatory parameters</p>;
+      return (
+        <Alert variant="danger">Please insert all mandatory parameters</Alert>
+      );
     } else if (
       //message shown if the end date is set before the starting date
       !this.areDatesCorrect(
@@ -193,18 +223,40 @@ export default class ConfiguratorResults extends React.Component {
     ) {
       return <p> End date for a rental must come after the starting date</p>;
     } else {
-      if (this.state.canRequestRent) {
+      if (this.state.canRequestRent && this.state.availableVehicles !== 0) {
         return (
           <>
-            <p>Available Vehicles: {this.state.availableVehicles}</p>
-            <p>Rental Price: {this.calculateRentPrice()}</p>
+            <Alert variant="success">
+              Available Vehicles: {this.state.availableVehicles}
+            </Alert>
+            <Alert variant="success">
+              Rental Price: {this.calculateRentPrice()}
+            </Alert>
+
+            <Button
+              onClick={() => {
+                this.setShowModal(true);
+              }}
+            >
+              Submit Payment
+            </Button>
+
+            <PaymentModal
+              canShow={this.state.canShowModal}
+              setShow={this.setShowModal}
+              category={this.props.input.category}
+              user={this.state.user}
+              vehicleIds={this.state.availableVehiclesId}
+              startingDay={this.props.input.startingDay}
+              endingDay={this.props.input.endingDay}
+            />
           </>
         );
       } else {
         return (
-          <p>
+          <Alert variant="info">
             There are no available vehicles for your requested configuration.
-          </p>
+          </Alert>
         );
       }
     }

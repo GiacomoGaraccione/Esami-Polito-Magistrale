@@ -1,6 +1,8 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import Container from "react-bootstrap/Container";
+import Navbar from "react-bootstrap/Navbar";
+import Button from "react-bootstrap/Button";
 
 import "./App.css";
 
@@ -10,40 +12,31 @@ function AppTitle(props) {
   if (props.loggedIn === true) {
     return (
       <Container fluid>
-        <nav className="navbar">
-          <a className="navbar-brand" href="/logged">
-            Car Rental
-          </a>
-        </nav>
-
-        <form className="form-inline">
+        <Navbar bg="light" className="mb-3">
+          <h2 className="text-dark" href="/logged">
+            Jack's Car Rental
+          </h2>
           <NavLink to="/rental" className="RentalAreaButton">
-            Rental Area
+            <Button variant="info"> Rental Area </Button>
           </NavLink>
-        </form>
+        </Navbar>
       </Container>
     );
   } else {
     return (
-      <nav className="navbar">
-        <a className="navbar-brand" href="/home">
-          Car Rental
-        </a>
-      </nav>
+      <Container fluid>
+        <Navbar bg="light" className="mb-3">
+          <h2 className="text-dark" href="/home">
+            Jack's Car Rental
+          </h2>
+
+          <NavLink to="/login">
+            <Button variant="success">Login</Button>
+          </NavLink>
+        </Navbar>
+      </Container>
     );
   }
 }
 
-function LoginButton(props) {
-  if (props.loggedIn === false) {
-    return (
-      <form className="form-inline">
-        <NavLink to="/login" className="LoginButton">
-          Login
-        </NavLink>
-      </form>
-    );
-  }
-}
-
-export { AppTitle, LoginButton };
+export { AppTitle };

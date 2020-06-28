@@ -21,10 +21,7 @@ export default class RentalConfigurator extends React.Component {
   }
 
   onChangeStartingDay = (event) => {
-    console.log(event.target.value);
     this.setState({ startingDay: event.target.value });
-    console.log("Start day:");
-    console.log(this.state.startingDay);
   };
 
   onChangeEndingDay = (event) => {

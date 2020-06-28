@@ -1,4 +1,5 @@
 import Vehicle from "./Vehicle.js";
+import Rental from "./Rental.js";
 
 async function getVehicles() {
   let url = "/vehicles";
@@ -42,7 +43,7 @@ async function login(username, password) {
         if (response.ok) {
           response.json().then((user) => {
             console.log(user);
-            resolve(user);
+            resolve();
           });
         } else {
           reject(response);
@@ -102,6 +103,81 @@ async function getVehiclesInCategory(category) {
   }
 }
 
+async function performPayment(name, cardNumber, cvv) {
+  return new Promise((resolve, reject) => {
+    fetch("/payment", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({ name: name, cardNumber: cardNumber, cvv: cvv }),
+    })
+      .then(() => {
+        resolve();
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+}
+
+async function getAvailableVehiclesId(category, startingDay, endingDay) {
+  let url =
+    "/vehicles/id/available?category=" +
+    category +
+    "&startingDay=" +
+    startingDay +
+    "&endingDay=" +
+    endingDay;
+
+  const response = await fetch(url);
+  const aVJson = await response.json();
+
+  if (response.ok) {
+    return aVJson.map((j) => j.id);
+  } else {
+    let err = { status: response.status, errObj: aVJson };
+    throw err;
+  }
+}
+
+async function postRental(userId, vehicleId, startingDay, endingDay) {
+  return new Promise((resolve, reject) => {
+    fetch("/rental", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: userId,
+        vehicleId: vehicleId,
+        startingDay: startingDay,
+        endingDay: endingDay,
+      }),
+    })
+      .then(() => {
+        resolve();
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+}
+
+async function getRentals(userId) {
+  let url = "/users/" + userId + "/rentals";
+
+  const response = await fetch(url);
+  const rentalsJson = await response.json();
+
+  if (response.ok) {
+    return rentalsJson;
+  } else {
+    let err = { status: response.status, errObj: rentalsJson };
+    throw err;
+  }
+}
+
 const API = {
   getVehicles,
   getBrands,
@@ -109,5 +185,9 @@ const API = {
   getAvailableVehicles,
   getUser,
   getVehiclesInCategory,
+  performPayment,
+  getAvailableVehiclesId,
+  postRental,
+  getRentals,
 };
 export default API;

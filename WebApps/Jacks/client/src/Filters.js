@@ -12,8 +12,6 @@ function Filters(props) {
     { id: "e", value: "E" },
   ];
 
-  const activeBrandFilters = [];
-
   return (
     <ListGroup>
       <h4>Categories:</h4>

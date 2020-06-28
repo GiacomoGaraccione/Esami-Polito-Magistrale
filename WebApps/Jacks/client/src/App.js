@@ -4,11 +4,12 @@ import API from "./api/API.js";
 import Container from "react-bootstrap/Container";
 import { Route } from "react-router-dom";
 import { Switch } from "react-router";
-import { AppTitle, LoginButton } from "./CustomComponents.js";
+import { AppTitle } from "./CustomComponents.js";
 import { ShowVehicles } from "./VehicleComponents.js";
 import { Filters } from "./Filters.js";
 import LoginForm from "./LoginForm.js";
 import RentalConfigurator from "./RentalConfigurator.js";
+import ShowRentals from "./ShowRentals.js";
 
 class App extends React.Component {
   constructor(props) {
@@ -38,49 +39,14 @@ class App extends React.Component {
     let aBF = this.state.activeBrandFilters;
     let vF = [];
 
+    console.log("aCF", aCF);
     if (this.state.activeCatFilters.includes(c.value)) {
       let i = aCF.indexOf(c);
       aCF.splice(i, 1);
-      if (aCF.length === 0 && aBF.length === 0) {
-        vF = this.state.vehicles;
-      } else {
-        for (let [i, v] of this.state.vehicles.entries()) {
-          let br = v.brand;
-          let cat = v.category;
-          if (v.category === c.value) {
-            if (aBF.length === 0) {
-              vF.push(v);
-            } else if (aBF.includes(br)) {
-              vF.push(v);
-            }
-          } else if (aCF.includes(cat)) {
-            if (aBF.length === 0) {
-              vF.push(v);
-            } else if (aBF.includes(br)) {
-              vF.push(v);
-            }
-          }
-        }
-      }
+      vF = this.filterCars(aCF, aBF);
     } else {
       aCF.push(c.value);
-      for (let [i, v] of this.state.vehicles.entries()) {
-        let br = v.brand;
-        let cat = v.category;
-        if (v.category === c.value) {
-          if (aBF.length === 0) {
-            vF.push(v);
-          } else if (aBF.includes(br)) {
-            vF.push(v);
-          }
-        } else if (aCF.includes(cat)) {
-          if (aBF.length === 0) {
-            vF.push(v);
-          } else if (aBF.includes(br)) {
-            vF.push(v);
-          }
-        }
-      }
+      vF = this.filterCars(aCF, aBF);
     }
     this.setState(() => ({
       vehiclesShow: vF,
@@ -94,55 +60,58 @@ class App extends React.Component {
     let aBF = this.state.activeBrandFilters;
     let vF = [];
 
+    console.log("aBF", aBF);
     if (this.state.activeBrandFilters.includes(b.Brand)) {
       let i = aBF.indexOf(b.Brand);
       aBF.splice(i, 1);
-      if (aBF.length === 0 && aCF.length === 0) {
-        vF = this.state.vehicles;
-      } else {
-        for (let [i, v] of this.state.vehicles.entries()) {
-          let br = v.brand;
-          let cat = v.category;
-          if (v.brand === b.Brand) {
-            if (aCF.length === 0) {
-              vF.push(v);
-            } else if (aCF.includes(cat)) {
-              vF.push(v);
-            }
-          } else if (aBF.includes(br)) {
-            if (aCF.length === 0) {
-              vF.push(v);
-            } else if (aCF.includes(cat)) {
-              vF.push(v);
-            }
-          }
-        }
-      }
+      vF = this.filterCars(aCF, aBF);
     } else {
       aBF.push(b.Brand);
-      for (let [i, v] of this.state.vehicles.entries()) {
-        let br = v.brand;
-        let cat = v.category;
-        if (v.brand === b.Brand) {
-          if (aCF.length === 0) {
-            vF.push(v);
-          } else if (aCF.includes(cat)) {
-            vF.push(v);
-          }
-        } else if (aBF.includes(br)) {
-          if (aCF.length === 0) {
-            vF.push(v);
-          } else if (aCF.includes(cat)) {
-            vF.push(v);
-          }
-        }
-      }
+      vF = this.filterCars(aCF, aBF);
     }
     this.setState(() => ({
       vehiclesShow: vF,
       activeCatFilters: aCF,
       activeBrandFilters: aBF,
     }));
+  };
+
+  filterCars = (activeCatFilters, activeBrandFilters) => {
+    let vF = [];
+    let vehicles = this.state.vehicles;
+
+    vF = vehicles.filter(
+      (v) =>
+        this.isCatCorrect(activeCatFilters, v) &&
+        this.isBrandCorrect(activeBrandFilters, v)
+    );
+    return vF;
+  };
+
+  isCatCorrect = (activeCatFilters, v) => {
+    if (activeCatFilters.length === 0) {
+      return true;
+    }
+    let i = activeCatFilters.findIndex(
+      (cat) => cat.localeCompare(v.category) === 0
+    );
+    if (i === -1) {
+      return false;
+    }
+    return true;
+  };
+
+  isBrandCorrect = (activeBrandFilters, v) => {
+    if (activeBrandFilters === 0) {
+      return true;
+    }
+    let i = activeBrandFilters.findIndex(
+      (br) => br.localeCompare(v.brand) === 0
+    );
+    if (i === -1) {
+      return false;
+    }
+    return true;
   };
 
   doLogin = (username, password) => {
@@ -154,8 +123,6 @@ class App extends React.Component {
   };
 
   render() {
-    console.log("Home: ");
-    console.log(this.state.loggedIn);
     if (this.state.loggedIn === true) {
       return (
         <Container fluid>
@@ -173,6 +140,7 @@ class App extends React.Component {
             </Route>
             <Route path="/login">
               <AppTitle loggedIn={this.state.loggedIn} />
+              <ShowRentals username={this.state.username} />
             </Route>
             <Route path="/rental">
               <AppTitle loggedIn={this.state.loggedIn} />
@@ -187,7 +155,6 @@ class App extends React.Component {
           <Switch>
             <Route path="/home">
               <AppTitle loggedIn={this.state.loggedIn} />
-              <LoginButton loggedIn={this.state.loggedIn} />
               <Filters
                 vehicles={this.state.vehicles}
                 vehiclesFiltered={this.state.vehiclesFiltered}
@@ -198,7 +165,6 @@ class App extends React.Component {
               <ShowVehicles vehiclesShow={this.state.vehiclesShow} />
             </Route>
             <Route path="/login">
-              <AppTitle loggedIn={this.state.loggedIn} />
               <LoginForm doLogin={this.doLogin} />
             </Route>
           </Switch>
