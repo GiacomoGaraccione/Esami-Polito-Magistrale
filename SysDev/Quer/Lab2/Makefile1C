@@ -1,0 +1,15 @@
+#
+# Makefile
+#
+
+target :
+	gcc -Wall -g -o l02e01C l02e01C.c -lpthread
+
+
+clean :
+	rm -f *.o
+	rm -rf l02e01C
+
+distclean : clean
+	rm -rf core
+	rm -rf *~

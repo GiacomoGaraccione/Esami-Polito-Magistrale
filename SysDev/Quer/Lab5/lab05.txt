@@ -1,0 +1,191 @@
+System and Device Programming
+Laboratory number 05 (System and Programming part)
+
+
+
+Learning goals
+--------------
+
+Summary on concurrent programming with Windows 32/64 constructs.
+
+
+
+Exercise 01
+-----------
+
+Compare N directory trees.
+
+A C program is run with N parameters.
+Each parameter indicates a relative or an absolute path to a file
+system directory tree.
+
+The program has to compare the content of all directories trees to
+decide whether they have the same content or not.
+
+Two directory trees have the same content *if and only if* all
+directory entries (files and sub-directories) have the same name
+(excluding the path leading to the root, which differ but for
+self-comparisons).
+
+Upon termination the program has to state whether all directory trees
+have the same content or not.
+
+Suggestions
+-----------
+
+- The main program run one "reading" thread for each directory tree
+  plus one unique "comparing" thread.
+- Each "reading" thread visits one of the directory tree.
+  It is reasonable to supposed (even if this is not explicitly stated
+  by the system call specifications) that in case of equivalent directory
+  trees, all visits proceed using the same order, i.e., they deliver
+  all directory entries in the same order.
+- Reading threads synchronize themselves for each entry they find,
+  waiting for each other before moving to the next entry.
+- For each entry, the "reading" threads activate the "comparing" thread.
+- The "comparing" thread compares the name of all entries received.
+  It stops all other threads (and the program) in case the entries are
+  not equal.
+  Otherwise, it returns the control to the "reading" threads.
+
+Observations
+------------
+
+Notice that there are at least 3 possible termination conditions
+to manage:
+- Directories are indeed equivalent.
+  This should lead to a successful termination.
+- Directories differ for some specific entry name.
+  This can be intercepted by the comparing thread.
+- Directories are (partially) equivalent but they include a
+  different number of entries.
+  In this case, one thread may terminate its reading task before all
+  others which may be waiting for it forever.
+  This situation should be avoided.
+
+
+
+Exercise 02
+------------
+
+A one-way bridge is approached by cars in both directions, but being
+one-way it must follow three rules:
+- Only cars from one direction can traverse the bridge in each moment,
+  either the ones moving from left-to-right or the one running from
+  right-to-left.
+- There can be multiple cars going in the same direction.
+- If cars from the opposite direction arrive while there are cars on
+  the bridge, those cars in the opposite direction must wait till the
+  bridge is cleared.
+
+Write a Windows program to synchronize all cars traversing the bridge.
+More specifically, the program must run two threads.
+The first thread is in charge of all cars moving from left-to-right.
+The second one is in charge of all cars moving from right-to-left.
+Each one of the previous two threads run one extra thread to represent
+each car.
+
+Notice that:
+- Cars running from left-to-right arrive at random time intervals,
+  varying from 0 to time_A_L2R (integer value) seconds.
+- Cars running from right-to-left arrive at random time intervals,
+  varying from 0 to time_A_R2L (integer value) seconds.
+- All cars traversing the bridge from left-to-right need time_T_L2R
+  (integer value) seconds
+- All cars traversing the bridge from right-to-left need time_T_R2L
+  (integer value) seconds
+- The program has to terminate only once exactly
+  - number_L2R (integer value) cars have traversed the bridge from
+    left-to-right
+  - number_R2L (integer value) cars have traversed the bridge from
+    right-to-left.
+
+The program must accepts 6 parameters on the command line, namely
+6 integers:
+time_A_L2R, time_A_R2L, time_T_L2R, time_T_R2L, number_L2R,
+number_R2L.
+
+Suggestion
+-----------
+
+Referring to the classical Reader and Writer logical scheme modify it
+to manipulate two sets of Readers.
+
+
+
+Exercise 03 (Optional)
+Examination Test (Programming Part) of July the 07st, 2017
+-------------------------------------------------------------
+
+A polynomials of degree n of a single variable (indeterminate) v 
+can be represented as:
+ 
+c_0 + c_1 x v^1 + c_2 x v^2 + c_3 x v^3 + x + c_n x v^n 
+ 
+A set of polynomials is stored in a binary file with the following
+format.
+Each sequence of n+2 consecutive values represent a polynomial:
+The first real number is the value of the variable v ,
+the next n values are coefficients (of terms of increasing power),
+the final number is the value of the polynomial evaluated in v and,
+at the beginning, is always equal to 0.0 .
+For example, the 3 polynomials
+ 
+112.23 +  6.34 x v^1 -  4.45 x v^2 + 4.56 x v^3 
+17.67  +  4.67 x v^1 - 33.24 x v^2 + 14.67 x v^3 
+123.45 - 89.99 x v^1 + 34.56 x v^2 + 5.897 x v^3 
+ 
+are stored in a binary file equivalent to the following ASCII form:
+
+3
+-124.342 112.23  6.34  -4.45  4.56  0.0
+ 34.663 17.67  4.67 -33.24 14.67  0.0
+  0.004 123.45 -89.99  34.56  5.897 0.0
+
+where the first integer number indicates the degree of the polynomials
+and all other records represent polynomials.
+Notice again that for each record the first number is the value
+assumed by the variable v , and the last one is always zero.
+Moreover, all values are stored as 32-bit values.
+
+A Windows 32 application has to evaluate all polynomials
+reported in the file for the value of the variable v with the
+following specifications:
+
+The program receives a file name (a string) on the command line.
+
+- After reading the first value (the degree n ) from the file, the program
+  has to run n threads, and then await for their termination.
+
+- Thread number i (with i=[1, n] ) will be in charge of computing the
+  term of degree i for all polynomials.
+  More specifically:
+
+ - For each record, thread i has to read the values of the variable v ,
+   and the coefficient c_i from file.
+   Then, it must compute the value of the term c_i x v^i .
+   Suppose the program will run on a hardware platform where only
+   additions and multiplications can be performed.
+   Then, all power v^i will have to be explicitly computed by the
+   threads as v x v x v ... (i-times).
+
+ - All threads have to proceed one record at a time, i.e.,
+   they have to *await* for each other *after* each single term
+   computation.
+   Then, when all terms have been computed the thread which has been
+   *faster* to compute its term (i.e., the one that has finished
+   *before* all others) has to compute the sum of all terms, add to
+   this value the constant, and store the result in place of the
+   corresponding zero value at the end of the current record.
+   After that, all threads can move on to the next polynomial.
+
+   Notice that at the end of the process, the file will be:
+
+   3
+   -124.342 112.23  6.34  -4.45  4.56  -8835818.819
+     34.663 17.67  4.67 -33.24 14.67   571223.189
+      0.004 123.45 -89.99  34.56  5.897    123.09059
+
+Please pay particular attention to the following issues:
+Data structure, file manipulation, and thread synchronization.
+
