@@ -1,5 +1,6 @@
 #include <iostream>
-
+using namespace std;
+//this way, can avoid doing std::cout and similar
 
 template <typename T>
 class StackClass
@@ -34,8 +35,8 @@ class StackClass
 		void print() {
 			int i;
 			for (i = 0; i < lastPos; i++) {
-				std::cout << _data_container[i];
-				std::cout << std::endl;
+				cout << _data_container[i];
+				cout << endl;
 			}
 		}
 
@@ -63,6 +64,6 @@ int main() {
 
 	//std::cout << me;
 
-	std::cout << res;
+	cout << res;
 	return 0;
 }
