@@ -7,8 +7,15 @@
 - Dynamic lifecycle: happens when a Fragment is added dynamically from an Activity (for example, pressing a Button in the Activity triggers the insertion of a new Fragment with the FragmentManager). After the event that causes the addition of the new Fragment is completed the Fragment is attached (onAttach(...)), created (onCreate(...), onCreateView(...), onViewCreated(...)) and then started and resumed (onStart(...), onResume(...)).
 
 #### Describe resources and how they're involved in app responsiveness
+Resources are additional files and static content used by an application, such as bitmaps, image files, UI text strings, animation instructions, layout definitions.
+They should be externalized from code so that they can be maintained independently and alternative resources should also be present, to account for different and specific device configurations (alternative resources are grouped in different folders identified by name): at runtime the code uses the resources specified for the current configuration. Resources are accessed in code through internal ID values (integers), and are grouped by category (layouts, strings, colors, styles, drawables)
 
 #### What are the main problems a Custom View has to care about?
+A custom View has to mainly care about:
+1. Negotiating with its container the space it needs to actually paint on screen
+2. Laying out its children in the space it receives
+3. Drawing the View in the received space
+It also should override the methods onSaveInstanceState(...) and onRestoreInstanceState(...), so that it can properly save and restore its own state.
 
 ## 20-07-2015
 
@@ -39,6 +46,7 @@ It interacts with a Handler, a class providing a thread-safe interface for inser
 ## 07-07-2017
 
 #### Activity come ne chiama un'altra e lifecycle di entrambe
+An Activity may call another one by defining an Intent, a special object which can be used to specify the intent of an application to do something. By creating the Intent with the context of the current Activity and the class corresponding to the second Activity (val intent = Intent(this, SecondActivity::class.java)) it is possible to launch the new Activity (startActivity(intent)). The lifecycle of the second Activity is strictly bound to that of the calling one: only after startActivity(...) is launched the onCreate(...) method of the second Activity will be called, and then the natural creation will follow (onStart(...) and then onResume(...)), with the first Activity being paused after startActivity(...) and stopped when the second Activity's onCreate(...) method is called; when the second Activity terminates its task it is destroyed (onDestroy(...)) and the first one can resume its operation with onRestart(...).
 
 #### AsyncTask
 An AsyncTask is one of the possible extensions used in Android to handle thread behavior; it is an abstract and parametric class that definse a task to be performed in a secondary thread, offering at the same time a set of methods that will be invoked from the main thread when it will be appropriate. It's a deprecated solution in favor of coroutines.
@@ -68,7 +76,5 @@ The Adapter has to override three methods to function correctly:
 - onCreateViewHolder(), supports creation of a new ViewHolder and the associated visual hierarchy tree
 - onBindViewHolder(), populates the created visual tree with the ViewHolder displaying data of a specific item.
 - 
-
-#### Describe the concept of structured concurrency provided by the coroutine framework in Kotlin and describe the benefits it introduces in Android components.
 
 #### Describe how a ReactNative application can manage its global state and make it available, in a consistent way, to all components.
