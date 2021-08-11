@@ -49,10 +49,8 @@ It interacts with a Handler, a class providing a thread-safe interface for inser
 An Activity may call another one by defining an Intent, a special object which can be used to specify the intent of an application to do something. By creating the Intent with the context of the current Activity and the class corresponding to the second Activity (val intent = Intent(this, SecondActivity::class.java)) it is possible to launch the new Activity (startActivity(intent)). The lifecycle of the second Activity is strictly bound to that of the calling one: only after startActivity(...) is launched the onCreate(...) method of the second Activity will be called, and then the natural creation will follow (onStart(...) and then onResume(...)), with the first Activity being paused after startActivity(...) and stopped when the second Activity's onCreate(...) method is called; when the second Activity terminates its task it is destroyed (onDestroy(...)) and the first one can resume its operation with onRestart(...).
 
 #### AsyncTask
-An AsyncTask is one of the possible extensions used in Android to handle thread behavior; it is an abstract and parametric class that definse a task to be performed in a secondary thread, offering at the same time a set of methods that will be invoked from the main thread when it will be appropriate. It's a deprecated solution in favor of coroutines.
+An AsyncTask is one of the possible extensions used in Android to handle thread behavior; it is an abstract and parametric class that defines a task to be performed in a secondary thread, offering at the same time a set of methods that will be invoked from the main thread when it will be appropriate. It's a deprecated solution in favor of coroutines.
 
-
-#### Cosa si può fare per gestire schermi con differenti dimensioni/risoluzioni
 
 ## 11-09-2017
 
