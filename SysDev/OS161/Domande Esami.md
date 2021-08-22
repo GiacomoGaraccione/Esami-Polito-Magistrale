@@ -314,6 +314,213 @@ They are two different stacks: the one pointed by `p_addrspace` is the user stac
 It points to the thread's switchframe, which allows to save/restore the context of the thread at each context switch (change of the thread running on the CPU).
 
 
-## 19-06-2021 
+## 19-06-2021 On/Off
+
+### Domanda 1
+Consider the following string of page references, for a given process. 7, 6, 2, 7, 2, 3, 2, 6, 7, 4, 2, 2, 7, 6.
+
+#### Simulate an LRU ((Least Recently Used) page replacement algorithm, with a limit of 3 available frames. Represent the resident set (physical frames containing logical pages) after each memory reference.
+|      A       |   B   |   C   |   D   |   E   |   F   |   G   |   H   |   I   |   J   |   K   |   L   |   M   |   N   |   O   |
+| :----------: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+|     Time     |   0   |   1   |   2   |   3   |   4   |   5   |   6   |   7   |   8   |   9   |  10   |  11   |  12   |  13   |
+|   Accesses   |   7   |   6   |   2   |   7   |   2   |   3   |   2   |   6   |   7   |   4   |   2   |   2   |   7   |   6   |
+| Resident Set |   7   |   7   |   7   |   7   |   7   |   7   |   7   |   6   |   6   |   6   |   2   |   2   |   2   |   2   |
+|              |       |   6   |   6   |   6   |   6   |   3   |   3   |   3   |   7   |   7   |   7   |   7   |   7   |   7   |
+|              |       |       |   2   |   2   |   2   |   2   |   2   |   2   |   2   |   4   |   4   |   4   |   4   |   6   |
+| Page Faults  |   *   |   *   |   *   |       |       |   *   |       |   *   |   *   |   *   |   *   |       |       |   *   |
+
+#### Show page faults (references to pages outside the resident set) and compute their overall count.
+Page faults are shown in the table above, and their overall count is equal to 9.
+
+### Domanda 2
+A given disk is organised with physical and logical blocks of given (same) size 4KB. The disk contains multiple partitions: partition A has size 1M blocks, and is formatted for a file system that statically allocates 1/8 of blocks for metadata (directories, file control blocks and a bitmap, for free space management), and 7/8 of blocks for file data. Every bit in the bitmap corresponds to one of the data blocks.
+
+#### Compute the size of the bitmap, in bytes and blocks.
+ND = (7/8) * |partition| = 7/8 M blocks = 896 Kblocks
+|bitmap| = 896 Kbits = 896/8 KB = 112 KB (one bit in the bitmap for each data block)
+|bitmap| = 112 KB / 4 KB = 28 blocks
+
+#### We know that the bitmap shows a ratio free/used blocks of 50% (so 1 free block for 2 used/allocated). Compute the maximum size of a contiguous interval of free blocks, when assuming the most favourable bitmap configuration.
+Nfree/Nused = 1/2 => Nfree = 1/3 * (Nfree + Nused) = ND * 1/3
+The most favourable configuration is the one with all the free blocks contiguous => max = ND/3 = 896 K/3 = 305835 blocks 
+
+### Domanda 3
+
+#### Briefly explain the following file structures, within the framework of a given file system :
+1. Sequence of bytes
+   Files are viewed as a sequence of bytes
+2. Simple record structure
+   The record is a higher level abstraction than the byte and can be with fixed or variable length(text files with lines terminated by end-of-line (\n)). A file will appear as a sequence of records,
+3. Complex structures, such as (for instance) index and relative files.
+   Complex file structures include data and metadata, organized for example in headers and/or sections; an index file (or the first part of a file) contains a table with pairs (key, pointer) that allow efficient search, where the pointer points directly to the data in the data (relative) file or in the second part of the file.
+
+#### Of all the above file structures, show whether they support sequential and/or direct (random) access.
+1. Files structured with sequences of bytes support sequential access and, if the single byte to access is known, also direct access.
+2. Files with fixed-length records allow both sequential and direct access (given the record number and size, the byte to be accessed is calculated) while variable-length records allow sequential access only
+3. Files with a complex structure allow both sequential and direct access, as long as, for direct access, it is possible to efficiently access the index and/or the header in which to find the pointer to the data
+
+#### Which of the following file allocation/implementation strategies can be used with the above listed structures (1, 2, and 3): contiguous allocation, linked list of blocks, FAT and indexed allocation?
+All three file types are compatible with all listed allocation strategies, since they're managed at different levels (application level in the first case, file organization module and filesystem level for the second case)
+
+### Domanda 4
+Consider a user process on OS161.
+
+#### Briefly explain the difference between the switchframe and the trapframe. Which one is used to start a user process? Which one to handle a system call? Which one for thread_fork?
+Both structures are used to save the process context (registers, other information), the switchframe is used when changing the process running in the CPU with a context switch while the trapframe is used when in the context of a trap (still in context of a process but in kernel mode).
+A user process is started using the trapframe.
+A system call is triggered by a trap, and thus it is handled with the trapframe.
+The function `thread_fork` uses the switchframe, because it prepares a thread ready to be put in the ready queue.
+
+#### Is the switchframe allocated in the user stack or the kernel-level process stack?
+It's allocated in the kernel stack, because it can't be visible while in user mode.
+
+#### Can an IO device be mapped to the logical address 0x90000050? And to 0xB0070060?
+IO devices must be mapped in kernel space and can't be read or written using the cache, since those operations are to be made only on the IO device; this means that they can only be mapped into kseg1, which isn't cached.
+0x90000050 belongs to kseg0, which is cached, so it's invalid, while 0xB0070060 is in the range defined by kseg1, so it is a valid address for an IO device.
+
+### Domanda 5
+Consider an OS161 kernel.
+
+#### Briefly describe the main features of semaphores and locks, and the main differences between them.
+Both semaphores and locks are synchronization mechanisms: a lock is used to manage mutual exclusion from a critical section thanks to its ownership semantics (only one process/thread can own a lock at a time, others that try to own it are forced to wait for it to become available); a semaphore can also handle synchronization schemes and is implemented with a counter which defines the amount of processes/threads that can access the critical section at the same time.
+
+#### What are wait_channels? Why are they used inside the kernel?
+Wait channels are a synchronization primitive which allows `wait` and `signal` operations similar to the ones used with condition variables (wchan_sleep, wchan_wakeone, wchan_broadcast); they are, in fact, low level primitives associated to spinlocks in the same way in which condition variables are associated with locks. A wait channel can only be used by the kernel thread that has acquired the spinlock.
+
+#### Is the following a possible prototype for function wchan_wakeone?
+    wchan_wakeone(struct wchan *wc, struct lock *lk);
+It's not a possible prototype because the second parameter shouldn't be a simple lock but a spinlock, because that's the one used by wait channels.
+
+## 19-06-2021
 
 ## 15-02-2021
+
+### Domanda 1
+System of virtual memory with paging and Byte addressing, which also has a TLB (Translation Look-aside Buffer). The page table is implemented with a two-level scheme, where a 64 bit logical address is divided (from MSB to LSB) in 3 parts: p1, p2 e d; p2 has 14 bit and d 13 bit. There are no other data structures (hash tables or inverted page table) to speed up accesses. Virtual memory is handled with demand paging.
+
+#### Assuming that the RAM memory has an access time of 160 ns, compute the TLB miss ratio needed to grant an EATpt <= 200 ns, assuming that the time needed to access the TLB is irrelevant. Is this value an upper bound or a lower bound for the TLB miss ratio?
+EAT = (TLB hit rate * access time) + ((1 - TLB hit rate) * 3 * access time) (3 for the miss because of the two-level scheme)
+h * t + (1-h) * 3 * t = EAT <= 200 ns
+t(h + 3 - 3 * h) = 200 ns
+t(3 - 2 * h) = 200 ns
+3 - 2 * h  = 200 ns/160 ns
+2 * h = 3 - 1.25
+h = 1.75 / 2 = 0.875 (TLB hit rate)
+miss rate = 1 -h = 0.125
+The value obtained is a upper bound because a higher miss rate increases the EATpt.
+
+#### Consider the page fault frequency pPF. An experimental evaluation shows that a page fault is served in 4 ms (on average) and that the prestation degradation (increase in execution time) caused by page faults is between 10% and 20%. Compute the range of values of pPF compatible with the experimental evaluation.
+tPF = 4 ms
+pPF * tPF = time increase
+=> 0.1 < pPF * tPF > 0.2
+0.1 < pPF * (4/200) * 10^6 > 0.2
+0.1 < 2 * 10^4 * pPF > 0.2
+5 * 10^-6 < pPF > 10^-5
+
+
+#### A second experimental evaluation is made using two reference strings, w1 and w2, of length len(w1) = 10^6 and len(w2) = 2 * 10^2 and probabilities p1 and p2. Simulations have generated a total of 500 page faults (100 on w1 and 400 on w2) and estimated an empiric probability (expected frequence) f = 0.00013 to have a page fault in the real system. Compute the values of p1 and p2.
+f = p1 * F1/len(w1) + p2 * F2/len(w2)
+1.3 * 10^-4 = p1 * 100/10^6 + p2 * 400/2*10^6
+1.3 * 10^-4 = p1 * 10^-4 + p2 * 2 * 10^-4
+1.3 = p1 + 2 * p2
+1.3 = 1 - p2 + 2 * p2
+=> p2 = 1.3 - 1 = 0.3
+p1 = 0.7
+
+### Domanda 2
+A disk is organized in physical and logical blocks of a given and equal size. The disk contains more partitions: the partition A is formatted with a file system that allocates statically NM=12.5K blocks for metadata (directories, file control block and a bitmap for handling free blocks), and ND=100M blocks for file data.
+
+#### Compute the block size BS, considering that NM/4 blocks are reserved to the bitmap, that has one bit for each of the ND data blocks.
+|bitmap| = ND/8 bytes = NM/4 * BS blocks
+=> BS = ND/(2 * NM) = 100 M/25 K Bytes = 4 KB
+
+#### We know that a file control block (FCB) has size 512B and NM/2 metadata blocks are reserved to FCBs. Compute the maximum number of files that can be stored in the file system.
+NFmax * |FCB| = NM/2
+=> NFmax = NM/(2 * |FCB|) = 12.5 Kblocks / (2 * (512 B / 4 KB) blocks) = 12.5 K * 4 = 50 K
+
+#### Suppose that the bitmap shows a proportion blocks free/blocks used equal to 50% (1 free block for every two used blocks) and that 5 * 2^20 free blocks are "isolated" (preceeded and followed by an used block). Compute the size of the largest free block interval |LargestFree| in the most favourable and in the least favourable scenarios (sizes have to be expressed as numbers of blocks)
+The bitmap has ND bits, 1 for each block; of these ND/3 are free (there's one free block for every two used block, meaning that 1/3 of blocks are free)
+
+Most favourable: |LargestFree| = ND/3 - 5 M blocks = 28.3 M blocks (all the free blocks that aren't by definition "isolated" are contiguous)
+Least favourable: |LargestFree| = 2 (all contiguous free blocks are allocated in couples and interleaved with occupied blocks)
+
+### Domanda 3
+Consider the optimizations implemented to improve overall performance of virtual memory management.
+
+#### Briefly explain the COW (Copy on Write) technique: what is it and how does it improve memory management performance? Is the expected gain/improvement on time? On memory size? On both time and memory?
+Copy on Write is a technique based on the idea that when a process is duplicated with a fork() operation the resulting processes, parent and child, both share the same memory region instead of having an exact copy of the memory used by the parent process made for the child; when one of the two processes has to perform a writing operation then the copy is done and the two memories differ. It improves both time, because the copying operation is done only when needed, potentially saving time if the two processes don't need to write, and also memory size, because memory is shared until one process writes, again saving space until needed.
+
+#### Explain why the IO on a swap partition (backing store) is faster than file system IO (even if on the same device). Can the virtual address space of a given process be larger than the size of the swap area (size of the swap partition or file)?
+It is faster because the swap space is allocated in larger chunks and less management is needed than file system.
+It can be larger, as the swap space just needs to provide storage for the used pages, not foe the unused ones.
+
+#### What is the role of the modify (dirty) bit associated to a page? Is the modify (dirty) bit just stored in the page table or is it also stored in the TLB (when available in a given processor)?
+The dirty bit keeps track of the state of a page in respect to its copy on disk or to a given time interval of observation; it can also be stored in the TLB, allowing for best performance since in case of a TLB hit there's no need to access the page table, but hardware support in order to do so is required (setting the bit when writing the page).
+
+### Domanda 4
+Si considerino tre kernel thread OS161 che realizzano un lavoro di trasferimento dati di tipo produttore/consumatore (1 produttore, 2 consumatori). I thread condividono un buffer per i dati, implementato come un struct C di tipo struct prodConsBuf definita come segue:
+    struct prodConsBuf {
+     data_t data;
+     int dataReady;
+     struct lock *pc_lk;
+     struct cv *pc_cv;
+    };
+Quando non ci sono dati presenti nel buffer, il flag dataReady vale 0. Quando il produttore scrive un nuovo dato (puntato da dp) nel buffer (campo data), pone il flag dataReady a 1 e invia un segnale a entrambi i consumatori con la funzione `void producerWrite(struct prodConsBuf *pc, data_t *dp);` mentre i consumatori chiamano iterativamente la funzione `void consumerRead(struct prodConsBuf *pc, data_t *dp);`. Quando i consumatori ricevono un segnale, solo uno dei due può trovare il flag dataReady al valore 1, quindi legge il dato (copiandolo dal buffer alla memoria puntata da dp), azzera il flag, infine ritorna/esce dalla funzione consumerRead. Il consumatore che trova il flag dataReady al valore 0 non fa nulla e si rimette in attesa di un altro segnale. Il lock viene usato per mutua esclusione, la condition variable viene usata per le segnalazioni produttore-consumatore. Si consideri unicamente la sincronizzazione da produttore a consumatore: NON SI RICHIEDE CHE IL PRODUTTORE VERIFICHI CHE UN MESSAGGIO SIA LETTO CORRETTAMENTE DA UN CONSUMATORE. Si può quindi assumere che il produttore effettui una nuova chiamata a producerWrite dopo che il precedente dato è stato acquisito correttamente dai consumatori.
+
+#### Can the shared structure be located into the thread stack, or should it be a global variable or other?
+It should be a global variable, because variables stored into the stack of a thread can only be read/written by that thread, and so other threads wouldn't be able to interact with the shared structure if it was put in the stack of a single thread.
+
+#### As the pc_lk and pc_cv fields are pointers, where should the lock_create() and cv_create() be called? In the producer thread, in the consumer threads? Elsewhere?
+The two functions should be called by the main thread (the one that starts the producer and the two consumers), rather than one of the three working threads, so that they can start working without issues; another solution would be to synchronize the three threads so that one of them calls the two functions and the others wait, then they all begin working after creation.
+
+#### Provide an implementation of functions producerWrite and consumerRead.
+void producerWrite(struct prodConsBuf *pc, data_t *dp){
+    lock_acquire(pc->pc_lk); //acquire lock for mutual exclusion, need to work on shared structure
+    pc->data = dp; //copy data
+    pc->dataReady = 1;
+    cv_broadcast(pc->pc_cv, pc->pc_lk); //signal to consumer threads
+    lock_release(pc->pc_lk); //release the lock
+}
+
+void consumerRead(struct prodConsBuf *pc, data_t *dp){
+    lock_acquire(pc->pc_lk);
+    while(!pc->dataReady){
+        cv_wait(pc->pc_cv, pc->pc_lk);
+    }
+    dp = pc->data;
+    pc->dataReady = 0;
+    lock_release(pc->pc_lk);
+}
+
+### Domanda 5
+Si consideri in OS161 una possibile implementazione delle system call relative al file system, basate su una tabella di processo e su una di sistema, definite come segue
+    /* system open file table */
+    struct openfile {
+     struct vnode *vn;
+     off_t offset;
+     unsigned int countRef;
+    };
+    /* this is a global variable */
+    struct openfile systemFileTable[SYSTEM_OPEN_MAX];
+    ...
+    /* user open file table: this a field of struct proc */
+    struct openfile *fileTable[OPEN_MAX];
+
+#### Why is systemFileTable a global variable, whereas fileTable is a field of struct proc ?
+systemFileTable is shared by all processes and is unique, so it must be a global variable, while every process has its own fileTable, which can be allocated inside the struct proc.
+
+#### Suppose two user processes call open() for the same file, will there be two entries in the systemFileTable for the file, or just one entry (pointed to, thus shared, by the two processes)?
+There will be two entries, because each process may have a different offset for reading/writing the file, meaning that a single entry can't be shared (a single entry in systemFileTable can only be shared as the result of a dup/dup2 system call).
+
+#### We need to implement the support for the SYS_lseek system call. Which data structures will be affected by the implementation of the SYS_lseek system call?
+    off_t lseek(int fd, off_t offset, int whence);
+    lseek() repositions the file offset of the open file description associated with the file descriptor fd to the argument offset according to the directive whence as follows:
+    SEEK_SET The file offset is set to offset bytes.
+    SEEK_CUR The file offset is set to its current location plus offset bytes. 
+    SEEK_END The file offset is set to the size of the file plus offset bytes.
+1. the process file table? 
+2. one entry of the systemFileTable (for a given call to lseek)?
+3. multiple entries of the systemFileTable (for a given call to lseek)?
+4. the vnode of the file?
+
+Only one entry of the systemFileTable will be affected: more specifically, the one corresponding to the process that called lseek and for which the file offset is changed.
