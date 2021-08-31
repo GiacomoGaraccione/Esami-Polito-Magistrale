@@ -24,3 +24,14 @@ Una volta tutto pronto si può compilare (in `kern/compile/HELLO`) eseguendo in 
 1. `bmake depend`
 2. `bmake`
 3. `bmake install`
+
+## Threads
+
+Per lanciare il debugger gdb con un kernel diverso da quello standard si deve modificare il file `pds-os161/root/.gdbinit`, aggiungendo una nuova opzione come
+
+`def dbos161t`
+  `dir ../..os161/os161-base-2.0.2/kern/compile/THREADS`
+  `target remote unix:.sockets/gdb`
+`end`
+
+mettendo poi `dbos161t` come ultima riga del file (in questo modo il debugger verrà automaticamente lanciato con il kernel `THREADS`)
