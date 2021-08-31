@@ -301,7 +301,7 @@ Then, each thread structure will also contain a pointer to the next thread in th
 void printOtherThreadNames(struct thread *t){
     struct proc *p = t->t_proc;
     struct thread *iter_t;
-    for(iter_t = p->p_threadsListHead; iter_t != NULL; iter_t = iter_t->p_nextThreadInList){
+    for(iter_t = p->p_threadsListHead; iter_t != NULL; iter_t = iter_t->p_nextThreadInList) {
         kprintf(iter_t->t_name);
     }
 }
@@ -889,19 +889,19 @@ Sia dato un sistema operativo OS161.
 #### Si supponga di aver definito l’opzione lab6 (defoption lab6) nel file conf.kern. Si vuole rendere opzionale (cioè compilata sono nel caso in cui sia abilitata l’opzione lab6) l’istruzione in linguaggio C (nella funzione boot): `Lab6Boot(”Aggiunta per LAB6”);` come occorre adattare il file main.c ?
 
 /* main.c */
-#include <types.h>
-#include <kern/errno.h>
-...
-#include <version.h>
-#include "autoconf.h" // for pseudoconfig 
+`#include <types.h>`
+`#include <kern/errno.h>`
+`...`
+`#include <version.h>`
+`#include "autoconf.h" // for pseudoconfig`
 `#include ”opt-lab6.h” // oppure inserire questa riga in un .h già incluso`
-int boot (void) {
-...
+`int boot (void) {`
+`...`
 `#if OPT_LAB6`
     `Lab6Boot(”Aggiunta per LAB6”);`
 `#endif`
-...
-}
+`...`
+`}`
 
 #### Si spieghi brevemente cosa sono switchframe e trapframe e a quale scopo vengono utilizzati.
 Risposta [duplicata](#briefly-explain-the-difference-between-the-switchframe-and-the-trapframe-which-one-is-used-to-start-a-user-process-which-one-to-handle-a-system-call-which-one-for-thread_fork)
