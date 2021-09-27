@@ -1079,10 +1079,10 @@ Esercizi risolti a lezione durante le esercitazioni, file `io-exercises.pdf`
 
 ### Domanda 4
 Sia dato un sistema operativo OS161, di cui viene riportato il codice relativo alla funzione `as_define_region`
-#define PAGE_SIZE 4096 /* size of VM page */ 
-#define PAGE_FRAME 0xfffff000 /* mask for getting page number from addr */
-...
-as_define_region(struct addrspace *as, vaddr_t vaddr, size_t sz, int readable, int writeable, int executable) {
+    #define PAGE_SIZE 4096 /* size of VM page */ 
+    #define PAGE_FRAME 0xfffff000 /* mask for getting page number from addr */
+    ...
+    as_define_region(struct addrspace *as, vaddr_t vaddr, size_t sz, int readable, int writeable, int executable) {
     size_t npages;
     ...
     /* Align the region. First, the base... */
